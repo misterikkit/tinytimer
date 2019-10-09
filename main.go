@@ -56,7 +56,9 @@ var blank = Frame{
 
 func main() {
 	fmt.Println("hello from main.go")
-	time.Sleep(time.Second)
+	loaded := make(chan struct{})
+	js.Global().Set("goLoad", js.FuncOf(func(js.Value, []js.Value) interface{} { close(loaded); return nil }))
+	<-loaded
 	DisplayLEDs(blank)
 
 	// fadeIn := Tween{from: time.Now(), to: time.Now().Add(4 * time.Second), start: 30, end: -10}
