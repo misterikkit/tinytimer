@@ -67,15 +67,23 @@ func main() {
 		// 	return ok
 		// },
 		func(now time.Time) bool {
-			v := int(time.Second.Nanoseconds()) / 24
-			p := now.Nanosecond() / v
+			// const period = 3 * time.Second
+			// phase := now.Sub(now.Round(period))
+			// frac := float64(phase) / float64(period)
+			// fmt.Println(frac)
+			step := int(time.Second.Nanoseconds()) / 24 // const
+			pixel := float32(now.Nanosecond()) / float32(step)
+			i := int(pixel)
+			weight := 1.0 - (pixel - float32(i))
+			val := uint8(255 * weight)
 			f := blank.Copy()
-			f[p] = RGB{255, 255, 255}
+			f[i] = RGB{val, val, val}
+			f[(i+1)%len(f)] = RGB{255 - val, 255 - val, 255 - val}
 			DisplayLEDs(f)
 			return true
 		},
 	}
-	t := time.NewTicker(time.Second / 24)
+	t := time.NewTicker(time.Second / 60)
 	for now := range t.C {
 		updaters = RunUpdaters(updaters, now)
 	}
