@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"syscall/js"
 	"time"
@@ -17,60 +16,81 @@ func (c RGB) JSValue() js.Value {
 	})
 }
 
-func main() {
-	fmt.Println("hello from main.go")
-	// t := time.NewTicker(time.Second / 24)
-	// fadeIn := Tween{from: time.Now(), to: time.Now().Add(4 * time.Second), start: 30, end: -10}
-	// updaters := []UpdateFunc{
-	// 	func(now time.Time) bool {
-	// 		v, ok := fadeIn.Value(now)
-	// 		fmt.Println(v)
-	// 		return ok
-	// 	},
-	// }
-	// for now := range t.C {
-	// 	updaters = RunUpdaters(updaters, now)
-	// }
-	c := RGB{}
-	c.JSValue()
-	time.Sleep(time.Second)
-	DisplayLEDs([]interface{}{
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-		RGB{0, 0, 0},
-	})
-	<-context.Background().Done()
+type Frame []RGB
+
+func (f Frame) Copy() Frame {
+	f2 := make(Frame, len(f))
+	for i := range f {
+		f2[i] = f[i]
+	}
+	// copy(f2, f)
+	return f2
 }
 
-func DisplayLEDs(data []interface{}) {
-	// jsonData := make([]interface{}, 0, len(data))
-	// for _, d := range data {
-	// 	jsonData = append(jsonData, js.ValueOf(map[string]uint8{"R": d.R, "G": d.G, "B": d.B}))
-	// }
+var blank = Frame{
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+}
+
+func main() {
+	fmt.Println("hello from main.go")
+	time.Sleep(time.Second)
+	DisplayLEDs(blank)
+
+	// fadeIn := Tween{from: time.Now(), to: time.Now().Add(4 * time.Second), start: 30, end: -10}
+	updaters := []UpdateFunc{
+		// func(now time.Time) bool {
+		// 	v, ok := fadeIn.Value(now)
+		// 	fmt.Println(v)
+		// 	return ok
+		// },
+		func(now time.Time) bool {
+			v := int(time.Second.Nanoseconds()) / 24
+			p := now.Nanosecond() / v
+			f := blank.Copy()
+			f[p] = RGB{255, 255, 255}
+			DisplayLEDs(f)
+			return true
+		},
+	}
+	t := time.NewTicker(time.Second / 24)
+	for now := range t.C {
+		updaters = RunUpdaters(updaters, now)
+	}
+
+	// <-context.Background().Done()
+}
+
+func DisplayLEDs(data Frame) {
+	jsonData := make([]interface{}, len(data))
+	for i := range data {
+		jsonData[i] = data[i]
+	}
+	// copy(jsonData, data)
 	f := js.Global().Get("DisplayLEDs")
-	// fmt.Println(f.Type())
-	f.Invoke(js.ValueOf(data))
+	f.Invoke(jsonData)
 }
 
 // An UpdateFunc is any func meant to be called once per timer tick. An
