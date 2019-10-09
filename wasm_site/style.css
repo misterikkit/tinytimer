@@ -1,13 +1,18 @@
-h1 {
+
+body {
+    text-align: center;
 }
 
 ol {
+    display: inline-block;
+    text-align: left;
     width: 470px;
     height: 265px;
     border: 1px solid green;
     padding: 235px 0 0 70px;
     transform: rotate(90deg);
-    background-color: #333333
+    background-color: #333333;
+    /* margin-left:40px; */
 }
 
 .led {
