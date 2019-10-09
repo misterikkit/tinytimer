@@ -6,7 +6,9 @@ wasm_site/main.wasm: main.go
 	GOOS=js GOARCH=wasm go build -o wasm_site/main.wasm main.go
 
 serve: wasm
+	find -name *.go -or -name *.js -or -name *.html | entr make wasm &
 	goexec 'http.ListenAndServe(`:8080`, http.FileServer(http.Dir(`./wasm_site`)))'
+	killall entr
 
 
 clean:
