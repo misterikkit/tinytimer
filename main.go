@@ -6,18 +6,19 @@ import (
 )
 
 func main() {
-	t := time.NewTicker(time.Second / 24)
-	fadeIn := Tween{from: time.Now(), to: time.Now().Add(4 * time.Second), start: 30, end: -10}
-	updaters := []UpdateFunc{
-		func(now time.Time) bool {
-			v, ok := fadeIn.Value(now)
-			fmt.Println(v)
-			return ok
-		},
-	}
-	for now := range t.C {
-		updaters = RunUpdaters(updaters, now)
-	}
+	fmt.Println("hello from main.go")
+	// t := time.NewTicker(time.Second / 24)
+	// fadeIn := Tween{from: time.Now(), to: time.Now().Add(4 * time.Second), start: 30, end: -10}
+	// updaters := []UpdateFunc{
+	// 	func(now time.Time) bool {
+	// 		v, ok := fadeIn.Value(now)
+	// 		fmt.Println(v)
+	// 		return ok
+	// 	},
+	// }
+	// for now := range t.C {
+	// 	updaters = RunUpdaters(updaters, now)
+	// }
 }
 
 // An UpdateFunc is any func meant to be called once per timer tick. An
