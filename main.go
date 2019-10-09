@@ -1,9 +1,21 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"syscall/js"
 	"time"
 )
+
+type RGB struct {
+	R, G, B uint8
+}
+
+func (c RGB) JSValue() js.Value {
+	return js.ValueOf(map[string]interface{}{
+		"R": c.R, "G": c.G, "B": c.B,
+	})
+}
 
 func main() {
 	fmt.Println("hello from main.go")
@@ -19,6 +31,46 @@ func main() {
 	// for now := range t.C {
 	// 	updaters = RunUpdaters(updaters, now)
 	// }
+	c := RGB{}
+	c.JSValue()
+	time.Sleep(time.Second)
+	DisplayLEDs([]interface{}{
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+		RGB{0, 0, 0},
+	})
+	<-context.Background().Done()
+}
+
+func DisplayLEDs(data []interface{}) {
+	// jsonData := make([]interface{}, 0, len(data))
+	// for _, d := range data {
+	// 	jsonData = append(jsonData, js.ValueOf(map[string]uint8{"R": d.R, "G": d.G, "B": d.B}))
+	// }
+	f := js.Global().Get("DisplayLEDs")
+	// fmt.Println(f.Type())
+	f.Invoke(js.ValueOf(data))
 }
 
 // An UpdateFunc is any func meant to be called once per timer tick. An
