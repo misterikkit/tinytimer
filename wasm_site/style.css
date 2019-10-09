@@ -1,7 +1,45 @@
 h1 {
-    color: blue;
+}
+
+ol {
+    width: 470px;
+    height: 265px;
+    border: 1px solid green;
+    padding: 235px 0 0 70px;
+    transform: rotate(90deg);
+    background-color: #333333
 }
 
 .led {
-
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #666666;
+    position: fixed;
+    transform-origin: 600% 50%;
 }
+
+#led00{ transform: rotate(0deg); }
+#led01{ transform: rotate(15deg); }
+#led02{ transform: rotate(30deg); }
+#led03{ transform: rotate(45deg); }
+#led04{ transform: rotate(60deg); }
+#led05{ transform: rotate(75deg); }
+#led06{ transform: rotate(90deg); }
+#led07{ transform: rotate(105deg); }
+#led08{ transform: rotate(120deg); }
+#led09{ transform: rotate(135deg); }
+#led10{ transform: rotate(150deg); }
+#led11{ transform: rotate(165deg); }
+#led12{ transform: rotate(180deg); }
+#led13{ transform: rotate(195deg); }
+#led14{ transform: rotate(210deg); }
+#led15{ transform: rotate(225deg); }
+#led16{ transform: rotate(240deg); }
+#led17{ transform: rotate(255deg); }
+#led18{ transform: rotate(270deg); }
+#led19{ transform: rotate(285deg); }
+#led20{ transform: rotate(300deg); }
+#led21{ transform: rotate(315deg); }
+#led22{ transform: rotate(330deg); }
+#led23{ transform: rotate(345deg); }
