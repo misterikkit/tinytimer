@@ -1,5 +1,8 @@
 
-wasm: _out/main.wasm
+wasm: wasm_site/main.wasm
 
-_out/main.wasm: main.go
-	GOOS=js GOARCH=wasm go build -o _out/main.wasm main.go
+wasm_site/main.wasm: main.go
+	GOOS=js GOARCH=wasm go build -o wasm_site/main.wasm main.go
+
+clean:
+	rm wasm_site/main.wasm
