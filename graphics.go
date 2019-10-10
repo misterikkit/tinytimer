@@ -39,6 +39,7 @@ type sprite struct {
 	Position float32
 	// Width of the sprite in radians
 	Size float32
+	// TODO: make SetPos and SetSize helpers and store edges, allowing a clean loader impl.
 }
 
 // Render will overwrite the requisite pixels.

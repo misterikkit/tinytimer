@@ -38,3 +38,31 @@ func (s *spinner) update(now time.Time) {
 		s.dots[i].Render(s.f)
 	}
 }
+
+type loader struct {
+	f          Frame
+	s          sprite
+	color      color.RGBA
+	start, end time.Time
+	done       bool
+}
+
+func newLoader(c color.RGBA) loader {
+	return loader{
+		f: newFrame(),
+		s: sprite{Color: c},
+	}
+}
+
+func (l *loader) update(now time.Time) {
+	l.f.reset()
+	progress := float32(1.0)
+	if now.Before(l.end) {
+		progress = float32(now.Sub(l.start)) / float32(l.end.Sub(l.start))
+	} else {
+		l.done = true
+	}
+	l.s.Size = Tau * progress
+	l.s.Position = l.s.Size / 2.0
+	l.s.Render(l.f)
+}

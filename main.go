@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"image/color"
 	"math"
 	"syscall/js"
 	"time"
@@ -24,11 +25,19 @@ func main() {
 	awaitWASMLoad()
 
 	s := newSpinner()
+	loader := newLoader(color.RGBA{255, 0, 0, 0})
+	loader.start = time.Now()
+	loader.end = time.Now().Add(2 * time.Second)
 
 	t := time.NewTicker(time.Second / FrameRate)
 	for now := range t.C {
-		s.update(now)
-		DisplayLEDs(s.f)
+		if loader.done {
+			s.update(now)
+			DisplayLEDs(s.f)
+		} else {
+			loader.update(now)
+			DisplayLEDs(loader.f)
+		}
 	}
 }
 
