@@ -24,7 +24,7 @@ type game struct {
 }
 
 func NewGame() game {
-	load := newLoader(K8SBlue, time.Now(), time.Now().Add(2*time.Second))
+	load := newLoader(K8SBlue, time.Now(), time.Now().Add(20*time.Second))
 	return game{
 		state:     BOOT,
 		animation: handle{&load.f, load.update},

@@ -101,7 +101,9 @@ func newFader(start, end time.Time) fader {
 
 func (f *fader) update(now time.Time) bool {
 	if now.After(f.end) {
-		return f.to.update(now)
+		done := f.to.update(now)
+		copy(f.f, *f.to.f)
+		return done
 	}
 
 	f.from.update(now)
