@@ -21,6 +21,7 @@ const (
 
 func main() {
 	fmt.Println("hello from main.go")
+	js.Global().Set("goHandleClick", js.FuncOf(handleClick))
 	awaitWASMLoad()
 
 	// s := newSpinner()
@@ -40,6 +41,12 @@ func main() {
 		// 	DisplayLEDs(loader.f)
 		// }
 	}
+}
+
+func handleClick(this js.Value, args []js.Value) interface{} {
+	id := args[0].String()
+	fmt.Println(id)
+	return nil
 }
 
 func awaitWASMLoad() {

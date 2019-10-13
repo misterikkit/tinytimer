@@ -8,12 +8,12 @@
 
 <body>
     <h1>Tiny Timer!</h1>
-    <!-- <div>
-        <button>BOOT</button>
-        <button>2 minutes</button>
-        <button>10 minutes</button>
-        <button>Cancel</button>
-    </div> -->
+    <div>
+        <button id="boot">BOOT</button>
+        <button class="goEvent" id="timer_2m">2 minutes</button>
+        <button class="goEvent" id="timer_10m">10 minutes</button>
+        <button class="goEvent" id="cancel">Cancel</button>
+    </div>
     <h1>
         <!--for spacing-->
     </h1>
@@ -51,7 +51,17 @@
     <script>
         const go = new Go();
         WebAssembly.instantiateStreaming(fetch("/main.wasm", { cache: "no-store" }), go.importObject)
-            .then((result) => { go.run(result.instance); $(goLoad) });
+            .then((result) => {
+                // Start the go app, which registers 'go' prefixed functions
+                go.run(result.instance);
+                // Set up button handlers
+                $(function () {
+                    $("#boot").click(function () { location.reload(); })
+                    $(".goEvent").click(function (e) { goHandleClick(e.target.id); })
+                })
+                // Signal page load to go app
+                $(goLoad)
+            });
     </script>
     <script src="/js/led.js"></script>
     <script src="/js/reload.js"></script>
