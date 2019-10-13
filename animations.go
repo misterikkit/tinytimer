@@ -54,6 +54,7 @@ func (s *spinner) update(now time.Time) bool {
 type loader struct {
 	f          Frame
 	s          sprite
+	bg         color.RGBA
 	start, end time.Time
 	done       bool
 }
@@ -71,7 +72,7 @@ func (l *loader) update(now time.Time) bool {
 	if l.done {
 		return true
 	}
-	l.f.fill(Black)
+	l.f.fill(l.bg)
 	progress := float32(1.0)
 	if now.Before(l.end) {
 		progress = float32(now.Sub(l.start)) / float32(l.end.Sub(l.start))

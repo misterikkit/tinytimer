@@ -4,11 +4,16 @@ import (
 	"image/color"
 )
 
-// Black is black
-var Black = color.RGBA{}
+// Colors
+var (
+	// Black is black
+	Black = color.RGBA{}
+	// K8SBlue is used in the k8s logo
+	K8SBlue = color.RGBA{0x32, 0x6C, 0xE5, 0}
 
-// K8SBlue is used in the k8s logo
-var K8SBlue = color.RGBA{0x32, 0x6C, 0xE5, 0}
+	White = color.RGBA{0xFF, 0xFF, 0xFF, 0}
+	Red   = color.RGBA{0xFF, 0, 0, 0}
+)
 
 // Frame represents all the pixels in one frame of animation.
 // Should this be [24]RGB?
@@ -31,7 +36,6 @@ type sprite struct {
 	Position float32
 	// Width of the sprite in radians
 	Size float32
-	// TODO: make SetPos and SetSize helpers and store edges, allowing a clean loader impl.
 }
 
 // Render will overwrite the requisite pixels.
@@ -52,6 +56,7 @@ func (s sprite) Render(f Frame) {
 		// overlap amount in radians
 		// fmt.Printf("RENDER: pixel[%d] is {%0.3f, %0.3f}\n", i, fi*PixelWidth, (fi+1.0)*PixelWidth)
 		amt := overlap(start, end, fi*PixelWidth, (fi+1.0)*PixelWidth)
+		// TODO: Use coverage as an alpha channel to combine with existing frame pixel.
 		coverage := amt / PixelWidth // fraction of pixel covered
 		// fmt.Printf("RENDER: coverage is %v\n", coverage)
 		f[(len(f)+i)%len(f)] = scale(s.Color, coverage)

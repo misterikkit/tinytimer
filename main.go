@@ -21,32 +21,29 @@ const (
 
 func main() {
 	fmt.Println("hello from main.go")
-	js.Global().Set("goHandleClick", js.FuncOf(handleClick))
+	g := NewGame()
+	js.Global().Set("goHandleClick", js.FuncOf(handleClick(&g)))
 	awaitWASMLoad()
 
-	// s := newSpinner()
-	// loader := newLoader(color.RGBA{255, 0, 0, 0})
-	// loader.start = time.Now()
-	// loader.end = time.Now().Add(20 * time.Second)
-
-	g := NewGame()
 	t := time.NewTicker(time.Second / FrameRate)
 	for now := range t.C {
 		g.update(now)
-		// if loader.done {
-		// 	s.update(now)
-		// 	DisplayLEDs(s.f)
-		// } else {
-		// 	loader.update(now)
-		// 	DisplayLEDs(loader.f)
-		// }
 	}
 }
 
-func handleClick(this js.Value, args []js.Value) interface{} {
-	id := args[0].String()
-	fmt.Println(id)
-	return nil
+func handleClick(g *game) func(js.Value, []js.Value) interface{} {
+	return func(_ js.Value, args []js.Value) interface{} {
+		id := args[0].String()
+		switch id {
+		case "timer_2m":
+			g.event(TIMER_2M)
+		case "timer_10m":
+			g.event(TIMER_10M)
+		case "cancel":
+			g.event(CANCEL)
+		}
+		return nil
+	}
 }
 
 func awaitWASMLoad() {
