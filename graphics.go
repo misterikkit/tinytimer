@@ -2,33 +2,25 @@ package main
 
 import (
 	"image/color"
-	"syscall/js"
 )
 
-// RGB is a color struct that plays nicely with wasm. Will need to move to
-// `color.RGBA` on TinyGo.
-type RGB struct {
-	R, G, B uint8
-}
+// Black is black
+var Black = color.RGBA{}
 
-// JSValue converts the given color to a JS object.
-func (c RGB) JSValue() js.Value {
-	return js.ValueOf(map[string]interface{}{
-		"R": c.R, "G": c.G, "B": c.B,
-	})
-}
+// K8SBlue is used in the k8s logo
+var K8SBlue = color.RGBA{0x32, 0x6C, 0xE5, 0}
 
 // Frame represents all the pixels in one frame of animation.
 // Should this be [24]RGB?
-type Frame []RGB
+type Frame []color.RGBA
 
 // newFrame returns an all-black frame.
 func newFrame() Frame { return make(Frame, FrameSize) }
 
-// reset blanks a frame (to avoid allocating new frames)
-func (f Frame) reset() {
+// fill blanks a frame (to avoid allocating new frames)
+func (f Frame) fill(c color.RGBA) {
 	for i := range f {
-		f[i] = RGB{}
+		f[i] = c
 	}
 }
 
@@ -45,24 +37,24 @@ type sprite struct {
 // Render will overwrite the requisite pixels.
 // TODO: implement alpha channels?
 func (s sprite) Render(f Frame) {
+	// fmt.Printf("RENDER: PixelWidth=%0.3f\n", PixelWidth)
+	// fmt.Printf("RENDER: size=%0.3f pos=%0.3f\n", s.Size, s.Position)
 
 	start, end := s.Position-s.Size/2, s.Position+s.Size/2
+	// fmt.Printf("RENDER: start=%0.3f, end=%0.3f\n", start, end)
 	firstPx := int(start / PixelWidth)
 	lastPx := int(0.5 + end/PixelWidth)
-	// fmt.Printf("start=%0.2f end=%0.2f firstPx=%v lastPx=%v\n", start, end, firstPx, lastPx)
-	// if lastPx >= FrameSize {
-	// 	fmt.Println("wrapping around")
-	// }
-	for i := firstPx; i <= lastPx; i++ {
+
+	// It seemed like looping i<=lastPx was always ending on a 0 coverage pixel.
+	// However, with i<lastPx, I suspect we are omitting partial pixels.
+	for i := firstPx; i < lastPx; i++ {
 		fi := float32(i)
 		// overlap amount in radians
+		// fmt.Printf("RENDER: pixel[%d] is {%0.3f, %0.3f}\n", i, fi*PixelWidth, (fi+1.0)*PixelWidth)
 		amt := overlap(start, end, fi*PixelWidth, (fi+1.0)*PixelWidth)
 		coverage := amt / PixelWidth // fraction of pixel covered
-		f[(len(f)+i)%len(f)] = RGB{
-			R: uint8(float32(s.Color.R) * coverage),
-			G: uint8(float32(s.Color.G) * coverage),
-			B: uint8(float32(s.Color.B) * coverage),
-		}
+		// fmt.Printf("RENDER: coverage is %v\n", coverage)
+		f[(len(f)+i)%len(f)] = scale(s.Color, coverage)
 	}
 }
 
@@ -83,4 +75,24 @@ func overlap(a1, a2, b1, b2 float32) float32 {
 	}
 	// Partial overlap
 	return a2 - b1
+}
+
+// scale performs alpha multiplying without a conversion through 32-bit values.
+func scale(c color.RGBA, s float32) color.RGBA {
+	scaler := uint16(s * 0xFF)
+	r := uint16(c.R)
+	r *= scaler
+	r /= 0xFF
+	g := uint16(c.G)
+	g *= scaler
+	g /= 0xFF
+	b := uint16(c.B)
+	b *= scaler
+	b /= 0xFF
+	return color.RGBA{
+		R: uint8(r),
+		G: uint8(g),
+		B: uint8(b),
+		A: c.A,
+	}
 }

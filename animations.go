@@ -29,7 +29,7 @@ func (s *spinner) update(now time.Time) {
 		period = 10 * time.Second
 		divide = Tau / 7.0
 	)
-	s.f.reset()
+	s.f.fill(Black)
 
 	// compute fraction through the period
 	progress := float32(now.Sub(now.Truncate(period))) / float32(period)
@@ -55,7 +55,10 @@ func newLoader(c color.RGBA) loader {
 }
 
 func (l *loader) update(now time.Time) {
-	l.f.reset()
+	if l.done {
+		return
+	}
+	l.f.fill(Black)
 	progress := float32(1.0)
 	if now.Before(l.end) {
 		progress = float32(now.Sub(l.start)) / float32(l.end.Sub(l.start))
@@ -64,5 +67,6 @@ func (l *loader) update(now time.Time) {
 	}
 	l.s.Size = Tau * progress
 	l.s.Position = l.s.Size / 2.0
+
 	l.s.Render(l.f)
 }

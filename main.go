@@ -27,7 +27,7 @@ func main() {
 	s := newSpinner()
 	loader := newLoader(color.RGBA{255, 0, 0, 0})
 	loader.start = time.Now()
-	loader.end = time.Now().Add(2 * time.Second)
+	loader.end = time.Now().Add(20 * time.Second)
 
 	t := time.NewTicker(time.Second / FrameRate)
 	for now := range t.C {
@@ -51,9 +51,8 @@ func awaitWASMLoad() {
 func DisplayLEDs(data Frame) {
 	jsonData := make([]interface{}, len(data))
 	for i := range data {
-		jsonData[i] = data[i]
+		jsonData[i] = map[string]interface{}{"R": data[i].R, "G": data[i].G, "B": data[i].B}
 	}
-	// copy(jsonData, data)
 	f := js.Global().Get("DisplayLEDs")
 	f.Invoke(jsonData)
 }
