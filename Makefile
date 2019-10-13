@@ -12,4 +12,4 @@ serve: wasm
 
 
 clean:
-	rm wasm_site/main.wasm
+	rm -f wasm_site/main.wasm
