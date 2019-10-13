@@ -6,13 +6,13 @@ import (
 
 // Colors
 var (
-	// Black is black
 	Black = color.RGBA{}
-	// K8SBlue is used in the k8s logo
-	K8SBlue = color.RGBA{0x32, 0x6C, 0xE5, 0}
-
 	White = color.RGBA{0xFF, 0xFF, 0xFF, 0}
 	Red   = color.RGBA{0xFF, 0, 0, 0}
+
+	// K8SBlue is used in the k8s logo
+	K8SBlue   = color.RGBA{0x32, 0x6C, 0xE5, 0}
+	CSIOrange = color.RGBA{0xF5, 0x91, 0x1E, 0}
 )
 
 // Frame represents all the pixels in one frame of animation.

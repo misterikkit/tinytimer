@@ -52,6 +52,8 @@ func (g *game) event(e event) {
 		g.startTimer(2 * time.Minute)
 	case TIMER_10M:
 		g.startTimer(10 * time.Minute)
+	case CANCEL:
+		g.cancelTimer()
 	}
 }
 
@@ -73,8 +75,15 @@ func (g *game) startTimer(d time.Duration) {
 	case IDLE:
 		g.state = COUNTDOWN
 		load := newLoader(Black, time.Now(), time.Now().Add(d))
-		load.bg = K8SBlue
+		load.bg = CSIOrange
 		g.animation = handle{&load.f, load.update}
+	}
+}
+
+func (g *game) cancelTimer() {
+	switch g.state {
+	case COUNTDOWN:
+		g.toIdle()
 	}
 }
 
