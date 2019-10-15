@@ -39,7 +39,6 @@ type sprite struct {
 }
 
 // Render will overwrite the requisite pixels.
-// TODO: implement alpha channels?
 func (s sprite) Render(f Frame) {
 	// fmt.Printf("RENDER: PixelWidth=%0.3f\n", PixelWidth)
 	// fmt.Printf("RENDER: size=%0.3f pos=%0.3f\n", s.Size, s.Position)
@@ -51,15 +50,16 @@ func (s sprite) Render(f Frame) {
 
 	// It seemed like looping i<=lastPx was always ending on a 0 coverage pixel.
 	// However, with i<lastPx, I suspect we are omitting partial pixels.
-	for i := firstPx; i < lastPx; i++ {
+	for i := firstPx; i <= lastPx; i++ {
 		fi := float32(i)
-		// overlap amount in radians
+		// amount of overlap between sprite and current pixel in radians
 		// fmt.Printf("RENDER: pixel[%d] is {%0.3f, %0.3f}\n", i, fi*PixelWidth, (fi+1.0)*PixelWidth)
 		amt := overlap(start, end, fi*PixelWidth, (fi+1.0)*PixelWidth)
-		// TODO: Use coverage as an alpha channel to combine with existing frame pixel.
 		coverage := amt / PixelWidth // fraction of pixel covered
+		// When rendering partial coverage, blend the color with the existing color.
+		index := (len(f) + i) % len(f)
 		// fmt.Printf("RENDER: coverage is %v\n", coverage)
-		f[(len(f)+i)%len(f)] = scale(s.Color, coverage)
+		f[index] = add(scale(s.Color, coverage), scale(f[index], 1.0-coverage))
 	}
 }
 
@@ -100,4 +100,8 @@ func scale(c color.RGBA, s float32) color.RGBA {
 		B: uint8(b),
 		A: c.A,
 	}
+}
+
+func add(c1, c2 color.RGBA) color.RGBA {
+	return color.RGBA{c1.R + c2.R, c1.G + c2.G, c1.B + c2.B, 0}
 }

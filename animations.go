@@ -2,6 +2,7 @@ package main
 
 import (
 	"image/color"
+	"math"
 	"time"
 )
 
@@ -101,6 +102,7 @@ func newFader(start, end time.Time) fader {
 }
 
 func (f *fader) update(now time.Time) bool {
+	// TODO: There is a weird blip at the beginning of each fade
 	if now.After(f.end) {
 		done := f.to.update(now)
 		copy(f.f, *f.to.f)
@@ -111,14 +113,30 @@ func (f *fader) update(now time.Time) bool {
 	f.to.update(now)
 	progress := float32(now.Sub(f.start)) / float32(f.end.Sub(f.start))
 	for i := range f.f {
-		cFrom := scale((*f.from.f)[i], 1.0-progress)
-		cTo := scale((*f.to.f)[i], progress)
-		f.f[i] = color.RGBA{
-			R: cFrom.R + cTo.R,
-			G: cFrom.G + cTo.G,
-			B: cFrom.B + cTo.B,
-		}
+		f.f[i] = add(
+			scale((*f.from.f)[i], 1.0-progress),
+			scale((*f.to.f)[i], progress),
+		)
 	}
 
 	return false
+}
+
+type flasher struct {
+	f   Frame
+	c   color.RGBA
+	end time.Time
+}
+
+func newFlasher(c color.RGBA, end time.Time) flasher {
+	return flasher{newFrame(), c, end}
+}
+
+func (f *flasher) update(now time.Time) bool {
+	progress := f.end.Sub(now).Seconds() * Tau
+	s := float32(math.Sin(progress))
+	s = s * s // stay smooth. stay positive
+	val := scale(f.c, s)
+	f.f.fill(val)
+	return now.After(f.end)
 }
