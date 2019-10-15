@@ -28,6 +28,7 @@ func main() {
 	t := time.NewTicker(time.Second / FrameRate)
 	for now := range t.C {
 		g.update(now)
+		DisplayLEDs(*g.animation.f)
 	}
 }
 

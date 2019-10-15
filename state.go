@@ -38,7 +38,6 @@ func NewGame() game {
 
 func (g *game) update(now time.Time) {
 	animationDone := g.animation.update(now)
-	DisplayLEDs(*g.animation.f)
 	if animationDone {
 		g.event(ANIMATION_DONE)
 	}
