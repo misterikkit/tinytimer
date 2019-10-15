@@ -20,9 +20,17 @@ const (
 func main() {
 	g := NewGame()
 	setup(&g)
-	t := time.NewTicker(time.Second / FrameRate)
-	for now := range t.C {
-		g.update(now)
+	nextTick := time.Now().Add(time.Second / FrameRate)
+	tick := func() time.Duration {
+		left := nextTick.Sub(time.Now())
+		nextTick = nextTick.Add(time.Second / FrameRate)
+		return left
+	}
+	for {
+		g.update(time.Now())
 		DisplayLEDs(*g.animation.f)
+		// timeLeft := nextTick.Sub(time.Now())
+		// tick()
+		time.Sleep(tick())
 	}
 }
