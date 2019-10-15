@@ -1,22 +1,20 @@
-// +build !wasmsite
-
 package main
 
 import (
 	"machine"
 
-	"tinygo.org/x/drivers/ws2812"
+	"github.com/misterikkit/tinytimer/ws2812"
 )
 
 var (
-	neo Pin
+	neo machine.Pin
 	ws  ws2812.Device
 )
 
 func setup(g *game) {
 	neo = machine.D13
 	neo.Configure(machine.PinConfig{Mode: machine.PinOutput})
-	ws = ws2812.New(new)
+	ws = ws2812.New(neo)
 }
 
 func DisplayLEDs(f Frame) {
