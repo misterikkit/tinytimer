@@ -49,8 +49,6 @@ func (s sprite) Render(f Frame) {
 	firstPx := int(start / PixelWidth)
 	lastPx := int(0.5 + end/PixelWidth)
 
-	// It seemed like looping i<=lastPx was always ending on a 0 coverage pixel.
-	// However, with i<lastPx, I suspect we are omitting partial pixels.
 	for i := firstPx; i <= lastPx; i++ {
 		fi := float32(i)
 		// amount of overlap between sprite and current pixel in radians
