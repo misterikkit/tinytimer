@@ -3,7 +3,7 @@ wasm: wasm_site/main.wasm
 	date > wasm_site/built_at.txt
 
 wasm_site/main.wasm: main.go
-	GOOS=js GOARCH=wasm go build -tags wasm -o wasm_site/main.wasm *.go
+	GOOS=js GOARCH=wasm go build -tags=wasmsite -o wasm_site/main.wasm *.go
 
 serve: wasm
 	find -name '*.go' -or -name '*.js' -or -name '*.html' -or -name '*.css' | entr make clean wasm &

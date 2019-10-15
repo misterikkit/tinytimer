@@ -1,11 +1,11 @@
+// +build wasmsite
+
 package main
 
 import (
 	"fmt"
 	"syscall/js"
 )
-
-// +build wasm
 
 func setup(g *game) {
 	fmt.Println("hello from main.go")
