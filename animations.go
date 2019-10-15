@@ -56,7 +56,7 @@ func (s *spinner) update(now time.Time) bool {
 
 type loader struct {
 	f          Frame
-	s          sprite
+	bar, dot   sprite
 	bg         color.RGBA
 	start, end time.Time
 	done       bool
@@ -65,7 +65,8 @@ type loader struct {
 func newLoader(c color.RGBA, start, end time.Time) loader {
 	return loader{
 		f:     newFrame(),
-		s:     sprite{Color: c},
+		bar:   sprite{Color: c},
+		dot:   sprite{Color: White, Size: PixelWidth},
 		start: start,
 		end:   end,
 	}
@@ -82,10 +83,14 @@ func (l *loader) update(now time.Time) bool {
 	} else {
 		l.done = true
 	}
-	l.s.Size = Tau * progress
-	l.s.Position = l.s.Size / 2.0
+	l.bar.Size = Tau * progress
+	l.bar.Position = l.bar.Size / 2.0
 
-	l.s.Render(l.f)
+	elapsed := float32(now.Sub(l.start).Seconds())
+	l.dot.Position = elapsed * Tau
+
+	l.bar.Render(l.f)
+	l.dot.Render(l.f)
 	return false
 }
 
