@@ -43,7 +43,8 @@ func (s sprite) Render(f Frame) {
 	// fmt.Printf("RENDER: PixelWidth=%0.3f\n", PixelWidth)
 	// fmt.Printf("RENDER: size=%0.3f pos=%0.3f\n", s.Size, s.Position)
 
-	start, end := s.Position-s.Size/2, s.Position+s.Size/2
+	// Add Tau to position because math gets weird near zero.
+	start, end := Tau+s.Position-s.Size/2, Tau+s.Position+s.Size/2
 	// fmt.Printf("RENDER: start=%0.3f, end=%0.3f\n", start, end)
 	firstPx := int(start / PixelWidth)
 	lastPx := int(0.5 + end/PixelWidth)

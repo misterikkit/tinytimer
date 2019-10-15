@@ -23,14 +23,16 @@ type spinner struct {
 	dots []sprite
 }
 
+const spinCount = 7
+
 func newSpinner() spinner {
-	const size = 1.5 * PixelWidth
+	const size = 1.7 * PixelWidth
 	var color = color.RGBA{0x32, 0x6C, 0xE5, 0}
 	s := spinner{
 		f:    newFrame(),
-		dots: make([]sprite, 0, 7),
+		dots: make([]sprite, 0, spinCount),
 	}
-	for i := 0; i < 7; i++ {
+	for i := 0; i < spinCount; i++ {
 		s.dots = append(s.dots, sprite{Size: size, Color: color})
 	}
 	return s
@@ -38,15 +40,15 @@ func newSpinner() spinner {
 
 func (s *spinner) update(now time.Time) bool {
 	const (
-		period = 10 * time.Second
-		divide = Tau / 7.0
+		period = spinCount * time.Second
+		divide = Tau / spinCount
 	)
 	s.f.fill(Black)
 
 	// compute fraction through the period
 	progress := float32(now.Sub(now.Truncate(period))) / float32(period)
 	for i := range s.dots {
-		s.dots[i].Position = Tau*progress + float32(i)*divide
+		s.dots[i].Position = float32(math.Mod(float64(Tau*progress+float32(i)*divide), Tau))
 		s.dots[i].Render(s.f)
 	}
 	return false
