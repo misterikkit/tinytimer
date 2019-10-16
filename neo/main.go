@@ -18,6 +18,32 @@ var (
 
 	AllRed  = []color.RGBA{CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange, CSIOrange}
 	AllBlue = []color.RGBA{K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue, K8SBlue}
+	Fun     = []color.RGBA{
+		{0, 10, 10, 10},
+		{10, 0, 10, 10},
+		{10, 10, 0, 10},
+		{10, 0, 0, 10},
+		{0, 10, 0, 10},
+		{0, 0, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+		{10, 10, 10, 10},
+	}
 )
 
 func main() {
@@ -30,6 +56,9 @@ func main() {
 		// neo.Low()
 		time.Sleep(time.Second)
 		ws.WriteColors(AllBlue)
+		// neo.Low()
+		time.Sleep(time.Second)
+		ws.WriteColors(Fun)
 		// neo.Low()
 		time.Sleep(time.Second)
 	}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"machine"
 	"math"
 	"time"
 )
@@ -20,16 +21,9 @@ const (
 func main() {
 	g := NewGame()
 	setup(&g)
-	f2 := newFrame()
-	DisplayLEDs(f2) // blank the LEDs
+	DisplayLEDs(newFrame()) // blank the LEDs
+
 	interval := time.Second / FrameRate
-	var now time.Time
-	for {
-		g.update(now)
-		DisplayLEDs(*g.animation.f)
-		now = now.Add(interval)
-		time.Sleep(interval)
-	}
 	// nextTick := time.Now().Add(time.Second / FrameRate)
 	// // return the time until next timer tick, and update `nextTick`
 	// tick := func() time.Duration {
@@ -39,17 +33,25 @@ func main() {
 	// 	return left
 	// }
 	// <-context.Background().Done()
-	// ledOut := true
-	// for {
-	// 	machine.LED.Set(ledOut)
-	// 	ledOut = !ledOut
-	// 	g.update(time.Now())
-	// 	DisplayLEDs(*g.animation.f)
-	// 	// timeLeft := nextTick.Sub(time.Now())
-	// 	// tick()
-	// 	// if time.Now().Second()%2 == 0 {
+	ledOut := true
+	// l := newLoader(K8SBlue, time.Now(), time.Now().Add(3*time.Second))
+	// fl := newFlasher(K8SBlue, time.Now())
+	dd := newDumb()
+	for {
+		// g.update(time.Now())
+		dd.update()
+		DisplayLEDs(dd.f)
 
-	// 	// }
-	// 	time.Sleep(time.Second / FrameRate)
-	// }
+		machine.LED.Set(ledOut)
+		ledOut = !ledOut
+		time.Sleep(interval)
+
+		// 	DisplayLEDs(*g.animation.f)
+		// 	// timeLeft := nextTick.Sub(time.Now())
+		// 	// tick()
+		// 	// if time.Now().Second()%2 == 0 {
+
+		// 	// }
+		// 	time.Sleep(time.Second / FrameRate)
+	}
 }
