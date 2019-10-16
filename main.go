@@ -11,7 +11,7 @@ const (
 	// Tau is better than Pi.
 	Tau = 2 * math.Pi
 
-	FrameRate = 10 // per second
+	FrameRate = 30 // per second
 
 	FrameSize = 24 // pixels
 
@@ -32,7 +32,7 @@ func main() {
 	// 	nextTick = nextTick.Add(time.Second / FrameRate)
 	// 	return left
 	// }
-	// <-context.Background().Done()
+
 	ledOut := true
 	// l := newLoader(K8SBlue, time.Now(), time.Now().Add(3*time.Second))
 	// fl := newFlasher(K8SBlue, time.Now())
