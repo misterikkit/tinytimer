@@ -19,4 +19,5 @@ func setup(g *game) {
 
 func DisplayLEDs(f Frame) {
 	ws.WriteColors(f)
+	neo.Set(false)
 }
