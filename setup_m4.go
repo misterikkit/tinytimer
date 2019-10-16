@@ -12,7 +12,7 @@ var (
 )
 
 func setup(g *game) {
-	neo = machine.D13
+	neo = machine.D5 // special level-shifted output pin
 	neo.Configure(machine.PinConfig{Mode: machine.PinOutput})
 	ws = ws2812.New(neo)
 }
