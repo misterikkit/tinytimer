@@ -26,7 +26,7 @@ type spinner struct {
 const spinCount = 7
 
 func newSpinner() spinner {
-	const size = 1.7 * PixelWidth
+	const size = 1.0 * PixelWidth
 	var color = color.RGBA{0x32, 0x6C, 0xE5, 0}
 	s := spinner{
 		f:    newFrame(),
