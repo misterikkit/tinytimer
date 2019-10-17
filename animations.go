@@ -147,19 +147,3 @@ func (f *flasher) update(now time.Time) bool {
 	f.f.fill(val)
 	return now.After(f.end)
 }
-
-type dumb struct {
-	f Frame
-}
-
-func newDumb() dumb {
-	d := dumb{newFrame()}
-	d.f[0] = White
-	return d
-}
-
-func (d *dumb) update() {
-	pixel := d.f[0]
-	copy(d.f[0:len(d.f)-1], d.f[1:len(d.f)])
-	d.f[len(d.f)-1] = pixel
-}
