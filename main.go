@@ -1,6 +1,7 @@
 package main
 
 import (
+	"image/color"
 	"machine"
 	"math"
 	"time"
@@ -21,7 +22,9 @@ const (
 func main() {
 	g := NewGame()
 	setup(&g)
-	DisplayLEDs(newFrame()) // blank the LEDs
+	f := newFrame()
+	f.fill(CSIOrange)
+	DisplayLEDs(f) // blank the LEDs
 
 	interval := time.Second / FrameRate
 	// nextTick := time.Now().Add(time.Second / FrameRate)
@@ -36,12 +39,33 @@ func main() {
 	ledOut := true
 	// l := newLoader(K8SBlue, time.Now(), time.Now().Add(3*time.Second))
 	// fl := newFlasher(K8SBlue, time.Now())
-	dd := newDumb()
+	// dd := newDumb()
+	// fl := float32(7)
+	start := time.Now()
 	for {
+		prog := time.Since(start)
+		// fl = float32(prog.Seconds())
+		// if fl > 10 {
+		// 	fl = 0
+		// }
+		val := math.Sin(prog.Seconds())
+		val = val * val
+		// fl = float32(val)
+		// println(fl)
+		// fl += 0.1
 		// g.update(time.Now())
-		dd.update()
-		DisplayLEDs(dd.f)
+		// dd.update()
+		// DisplayLEDs(dd.f)
 
+		var c color.RGBA
+		if val > 0 {
+			c = scale(K8SBlue, float32(val))
+		} else {
+			c = scale(CSIOrange, float32(-val))
+		}
+		// c = scale(c, fl)
+		f.fill(c)
+		DisplayLEDs(f)
 		machine.LED.Set(ledOut)
 		ledOut = !ledOut
 		time.Sleep(interval)
