@@ -60,7 +60,7 @@ func (g *game) event(e event) {
 func (g *game) animationDone() {
 	switch g.state {
 	case BOOT:
-		g.toIdle(3 * time.Second)
+		g.toIdle(2 * time.Second)
 	case COUNTDOWN:
 		g.state = TIMERPOP
 		pop := newFlasher(Red, time.Now().Add(2*time.Second))
