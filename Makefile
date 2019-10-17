@@ -24,4 +24,4 @@ serve: wasm
 	killall entr
 
 clean:
-	rm -f wasm_site/main.wasm
+	rm -f wasm_site/main.wasm flash.uf2
