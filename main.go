@@ -10,7 +10,7 @@ const (
 	// Tau is better than Pi.
 	Tau = 2 * math.Pi
 
-	FrameRate = 30 // per second
+	FrameRate = 60 // per second
 
 	FrameSize = 24 // pixels
 

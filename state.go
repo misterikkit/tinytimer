@@ -24,19 +24,22 @@ const (
 )
 
 type game struct {
-	state     state
-	animation handle
+	state      state
+	animation  handle
+	pollInputs func()
 }
 
 func NewGame() game {
 	load := newLoader(White, time.Now(), time.Now().Add(time.Second/2))
 	return game{
-		state:     BOOT,
-		animation: handle{&load.f, load.update},
+		state:      BOOT,
+		animation:  handle{&load.f, load.update},
+		pollInputs: func() {},
 	}
 }
 
 func (g *game) update(now time.Time) {
+	g.pollInputs()
 	animationDone := g.animation.update(now)
 	if animationDone {
 		g.event(ANIMATION_DONE)
