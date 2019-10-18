@@ -30,7 +30,7 @@ type game struct {
 }
 
 func NewGame() game {
-	load := newLoader(White, time.Now(), time.Now().Add(time.Second/2))
+	load := newLoader(White, time.Now(), time.Now().Add(scaleDuration(time.Second/2)))
 	return game{
 		state:      BOOT,
 		animation:  handle{&load.f, load.update},
@@ -51,10 +51,10 @@ func (g *game) event(e event) {
 	case ANIMATION_DONE:
 		g.animationDone()
 	case TIMER_2M:
-		g.startTimer(2 * time.Minute)
+		g.startTimer(scaleDuration(2 * time.Minute))
 	case TIMER_10M:
-		g.startTimer(10 * time.Second)
-		// g.startTimer(10 * time.Minute)
+		g.startTimer(scaleDuration(10 * time.Second))
+		// g.startTimer(scaleDuration(10 * time.Minute))
 	case CANCEL:
 		g.cancelTimer()
 	}
@@ -63,13 +63,13 @@ func (g *game) event(e event) {
 func (g *game) animationDone() {
 	switch g.state {
 	case BOOT:
-		g.toIdle(2 * time.Second)
+		g.toIdle(scaleDuration(2 * time.Second))
 	case COUNTDOWN:
 		g.state = TIMERPOP
-		pop := newFlasher(Red, time.Now().Add(2*time.Second))
+		pop := newFlasher(Red, time.Now().Add(scaleDuration(2*time.Second)))
 		g.animation = handle{&pop.f, pop.update}
 	case TIMERPOP:
-		g.toIdle(1 * time.Second)
+		g.toIdle(scaleDuration(1 * time.Second))
 	}
 }
 
@@ -82,6 +82,7 @@ func (g *game) startTimer(d time.Duration) {
 		fallthrough
 	case IDLE:
 		g.state = COUNTDOWN
+		// Don't scale this duration because it has been scaled in the caller.
 		load := newLoader(Black, time.Now(), time.Now().Add(d))
 		load.bg = CSIOrange
 		g.animation = handle{&load.f, load.update}
@@ -91,7 +92,7 @@ func (g *game) startTimer(d time.Duration) {
 func (g *game) cancelTimer() {
 	switch g.state {
 	case COUNTDOWN:
-		g.toIdle(1 * time.Second)
+		g.toIdle(scaleDuration(1 * time.Second))
 	}
 }
 
@@ -99,6 +100,7 @@ func (g *game) cancelTimer() {
 func (g *game) toIdle(d time.Duration) {
 	g.state = IDLE
 	spin := newSpinner()
+	// Don't scale this duration because it has been scaled in the caller.
 	fade := newFader(time.Now(), time.Now().Add(d))
 	fade.from = g.animation
 	fade.to = handle{&spin.f, spin.update}

@@ -39,10 +39,8 @@ func newSpinner() spinner {
 }
 
 func (s *spinner) update(now time.Time) bool {
-	const (
-		period = spinCount * time.Second
-		divide = Tau / spinCount
-	)
+	var period = scaleDuration(spinCount * time.Second)
+	const divide = Tau / spinCount
 	s.f.fill(Black)
 
 	// compute fraction through the period
@@ -87,6 +85,8 @@ func (l *loader) update(now time.Time) bool {
 	l.bar.Position = l.bar.Size / 2.0
 
 	elapsed := float32(now.Sub(l.start).Seconds())
+	// This is reverse scaled since it is supposed to match real second ticks.
+	elapsed *= TimeScale
 	l.dot.Position = elapsed * Tau
 
 	l.bar.Render(l.f)
