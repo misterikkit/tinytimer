@@ -17,11 +17,11 @@ func setup(g *game) {
 	ws = ws2812.New(neo)
 
 	btn2Min := machine.D11
-	btn2Min.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
+	btn2Min.Configure(machine.PinConfig{Mode: machine.PinInputPulldown})
 	btn10Min := machine.D12
-	btn10Min.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
+	btn10Min.Configure(machine.PinConfig{Mode: machine.PinInputPulldown})
 	btnCancel := machine.D10
-	btnCancel.Configure(machine.PinConfig{Mode: machine.PinInputPullup})
+	btnCancel.Configure(machine.PinConfig{Mode: machine.PinInputPulldown})
 	g.pollInputs = func() {
 		if btnCancel.Get() {
 			g.event(CANCEL)
