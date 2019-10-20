@@ -40,5 +40,16 @@ func setup(g *game) {
 }
 
 func DisplayLEDs(f Frame) {
+	// dimColors(f)
 	ws.WriteColors(f)
+}
+
+func dimColors(f Frame) {
+	for i := range f {
+		// Dim by 25%
+		f[i] = scale(f[i], 0.25)
+		// f[i].R >>= 2
+		// f[i].G >>= 2
+		// f[i].B >>= 2
+	}
 }

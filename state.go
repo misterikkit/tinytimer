@@ -84,7 +84,7 @@ func (g *game) startTimer(d time.Duration) {
 		g.state = COUNTDOWN
 		// Don't scale this duration because it has been scaled in the caller.
 		load := newLoader(Black, time.Now(), time.Now().Add(d))
-		load.bg = CSIOrange
+		load.bg = K8SBlue
 		g.animation = handle{&load.f, load.update}
 	}
 }
