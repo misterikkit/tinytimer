@@ -26,7 +26,7 @@ type spinner struct {
 const spinCount = 7
 
 func newSpinner() spinner {
-	const size = 1.0 * PixelWidth
+	const size = 0.8 * PixelWidth
 	var color = color.RGBA{0x32, 0x6C, 0xE5, 0}
 	s := spinner{
 		f:    newFrame(),
@@ -39,7 +39,7 @@ func newSpinner() spinner {
 }
 
 func (s *spinner) update(now time.Time) bool {
-	var period = scaleDuration(spinCount * time.Second)
+	var period = scaleDuration(spinCount * time.Second / 2)
 	const divide = Tau / spinCount
 	s.f.fill(Black)
 
