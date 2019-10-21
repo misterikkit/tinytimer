@@ -20,7 +20,6 @@ type handle struct {
 // spinner is the idle animation with 7 spinning dots
 type spinner struct {
 	f    Frame
-	c    color.RGBA
 	dots []sprite
 }
 
@@ -30,7 +29,6 @@ func newSpinner(c color.RGBA) spinner {
 	const size = 0.8 * PixelWidth
 	s := spinner{
 		f:    newFrame(),
-		c:    c,
 		dots: make([]sprite, 0, spinCount),
 	}
 	for i := 0; i < spinCount; i++ {
@@ -40,7 +38,7 @@ func newSpinner(c color.RGBA) spinner {
 }
 
 func (s *spinner) update(now time.Time) bool {
-	var period = scaleDuration(spinCount * time.Second / 2)
+	var period = scaleDuration(spinCount * time.Second)
 	const divide = Tau / spinCount
 	s.f.fill(Black)
 
