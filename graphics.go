@@ -4,15 +4,18 @@ import (
 	"image/color"
 )
 
+// Scale factor to cap intensity
+const toneItDown = 0.2
+
 // Colors
 var (
 	Black = color.RGBA{}
-	White = scale(color.RGBA{0xFF, 0xFF, 0xFF, 0}, 0.2)
-	Red   = color.RGBA{0xFF, 0, 0, 0}
+	White = scale(color.RGBA{0xFF, 0xFF, 0xFF, 0}, toneItDown)
+	Red   = scale(color.RGBA{0xFF, 0, 0, 0}, toneItDown)
 
 	// K8SBlue is used in the k8s logo
-	K8SBlue   = scale(color.RGBA{0x32, 0x6C, 0xE5, 0}, 0.2) // H=221deg S=78.2% V=89.8%
-	CSIOrange = scale(color.RGBA{0xF5, 0x91, 0x1E, 0}, 0.2) // H=32deg  S=87.8% V=96.1%
+	K8SBlue   = scale(color.RGBA{0x32, 0x6C, 0xE5, 0}, toneItDown) // H=221deg S=78.2% V=89.8%
+	CSIOrange = scale(color.RGBA{0xF5, 0x91, 0x1E, 0}, toneItDown) // H=32deg  S=87.8% V=96.1%
 )
 
 // Frame represents all the pixels in one frame of animation.
