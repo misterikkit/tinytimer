@@ -20,20 +20,21 @@ type handle struct {
 // spinner is the idle animation with 7 spinning dots
 type spinner struct {
 	f    Frame
+	c    color.RGBA
 	dots []sprite
 }
 
 const spinCount = 7
 
-func newSpinner() spinner {
+func newSpinner(c color.RGBA) spinner {
 	const size = 0.8 * PixelWidth
-	var color = color.RGBA{0x32, 0x6C, 0xE5, 0}
 	s := spinner{
 		f:    newFrame(),
+		c:    c,
 		dots: make([]sprite, 0, spinCount),
 	}
 	for i := 0; i < spinCount; i++ {
-		s.dots = append(s.dots, sprite{Size: size, Color: color})
+		s.dots = append(s.dots, sprite{Size: size, Color: c})
 	}
 	return s
 }

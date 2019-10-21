@@ -84,7 +84,7 @@ func (g *game) startTimer(d time.Duration) {
 		g.state = COUNTDOWN
 		// Don't scale this duration because it has been scaled in the caller.
 		load := newLoader(Black, time.Now(), time.Now().Add(d))
-		load.bg = K8SBlue
+		load.bg = CSIOrange
 		g.animation = handle{&load.f, load.update}
 	}
 }
@@ -99,7 +99,7 @@ func (g *game) cancelTimer() {
 // toIdle fades from current animation to idle animation
 func (g *game) toIdle(d time.Duration) {
 	g.state = IDLE
-	spin := newSpinner()
+	spin := newSpinner(K8SBlue)
 	// Don't scale this duration because it has been scaled in the caller.
 	fade := newFader(time.Now(), time.Now().Add(d))
 	fade.from = g.animation
