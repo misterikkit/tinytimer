@@ -1,9 +1,11 @@
 package main
 
 import (
+	"image/color"
 	"machine"
 
 	"github.com/misterikkit/tinytimer/ws2812"
+	"tinygo.org/x/drivers/apa102"
 )
 
 var (
@@ -12,6 +14,13 @@ var (
 )
 
 func setup(g *game) {
+	// Disable DotStar LED
+	// TODO: make this work.
+	machine.D6.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	machine.D8.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	dotStar := apa102.NewSoftwareSPI(machine.D6, machine.D8, 120000)
+	dotStar.WriteColors([]color.RGBA{{}})
+
 	neo = machine.D5 // special level-shifted output pin
 	neo.Configure(machine.PinConfig{Mode: machine.PinOutput})
 	ws = ws2812.New(neo)
