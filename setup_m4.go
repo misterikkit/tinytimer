@@ -15,7 +15,7 @@ var (
 	ws  ws2812.Device
 )
 
-//export EIC_EXTINT_0_IRQHandler
+//go:export EIC_EXTINT_0_IRQHandler
 func extint0_handler() {
 	machine.LED.Set(true)
 }
@@ -24,6 +24,9 @@ func setupExtInt() {
 	machine.LED.Configure(machine.PinConfig{Mode: machine.PinOutput})
 	machine.LED.Set(false)
 	intPin := machine.PA00
+
+	// disable EIC for config changes
+	sam.EIC.CTRLA.ClearBits(sam.EIC_CTRLA_ENABLE)
 
 	// some bits copied from machine_atsamd51g19.go
 
@@ -47,12 +50,15 @@ func setupExtInt() {
 	sam.EIC.INTENSET.Set(1) // set 0th bit
 	sam.EIC.CONFIG[0].SetBits(sam.EIC_CONFIG_SENSE0_HIGH)
 	sam.EIC.CONFIG[0].SetBits(sam.EIC_CONFIG_FILTEN0)
+
+	// enable EIC
+	sam.EIC.CTRLA.SetBits(sam.EIC_CTRLA_ENABLE)
 }
 
 func setup(g *game) {
 	machine.LED.Configure(machine.PinConfig{Mode: machine.PinOutput})
 	machine.LED.Set(true)
-	setupExtInt()
+	// setupExtInt()
 	// Disable DotStar LED
 	// TODO: make this work.
 	dsClock := machine.PB02
@@ -60,7 +66,7 @@ func setup(g *game) {
 	dsClock.Configure(machine.PinConfig{Mode: machine.PinOutput})
 	dsData.Configure(machine.PinConfig{Mode: machine.PinOutput})
 	dotStar := apa102.NewSoftwareSPI(dsClock, dsData, 120000)
-	dotStar.WriteColors([]color.RGBA{{}})
+	dotStar.WriteColors([]color.RGBA{{R: 0, G: 0, B: 0}})
 
 	neo = machine.D5 // special level-shifted output pin
 	neo.Configure(machine.PinConfig{Mode: machine.PinOutput})
