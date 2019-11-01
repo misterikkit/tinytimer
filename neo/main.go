@@ -53,13 +53,12 @@ func main() {
 
 	for {
 		ws.WriteColors(AllRed)
-		// neo.Low()
 		time.Sleep(time.Second)
+
 		ws.WriteColors(AllBlue)
-		// neo.Low()
 		time.Sleep(time.Second)
+
 		ws.WriteColors(Fun)
-		// neo.Low()
 		time.Sleep(time.Second)
 	}
 }
