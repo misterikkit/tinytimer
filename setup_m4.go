@@ -28,14 +28,18 @@ func setup(g *game) {
 
 	g.pollInputs = func() {
 		if btnCancel.Get() {
+			machine.LED.Set(true)
+
 			g.event(CANCEL)
 			return
 		}
 		if btn2Min.Get() {
+			machine.LED.Set(false)
 			g.event(TIMER_2M)
 			return
 		}
 		if btn10Min.Get() {
+			machine.LED.Set(false)
 			g.event(TIMER_10M)
 			return
 		}
