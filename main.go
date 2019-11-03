@@ -1,6 +1,7 @@
 package main
 
 import (
+	"machine"
 	"math"
 	"time"
 )
@@ -10,7 +11,7 @@ const (
 	// Tau is better than Pi.
 	Tau = 2 * math.Pi
 
-	FrameRate = 60 // per second
+	FrameRate = 30 // per second
 
 	FrameSize = 24 // pixels
 
@@ -23,8 +24,8 @@ const (
 
 func main() {
 	g := NewGame()
-	setup(&g)
-	DisplayLEDs(newFrame()) // blank the LEDs
+	// setup(&g)
+	// DisplayLEDs(newFrame()) // blank the LEDs
 
 	tickInterval := scaleDuration(time.Second / FrameRate)
 	nextTick := time.Now().Add(tickInterval)
@@ -36,11 +37,21 @@ func main() {
 		return left
 	}
 
+	led := true
 	for {
-		g.update(time.Now())
+		// g.update(time.Now())
 		DisplayLEDs(*g.animation.f)
+
+		machine.LED.Set(led)
+		led = !led
 		time.Sleep(tick())
 	}
+
+	// for {
+	// 	g.update(time.Now())
+	// DisplayLEDs(*g.animation.f)
+	// 	time.Sleep(tick())
+	// }
 }
 
 // scaleDuration reduces a duration by a constant ratio to accommodate for a

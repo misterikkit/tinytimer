@@ -13,7 +13,7 @@ var (
 
 func setup(g *game) {
 	machine.LED.Configure(machine.PinConfig{Mode: machine.PinOutput})
-	machine.LED.Set(false)
+	machine.LED.Set(true)
 
 	neo = machine.D5 // special level-shifted output pin
 	neo.Configure(machine.PinConfig{Mode: machine.PinOutput})

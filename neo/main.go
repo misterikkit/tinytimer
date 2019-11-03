@@ -51,14 +51,32 @@ func main() {
 	neo.Configure(machine.PinConfig{Mode: machine.PinOutput})
 	ws := ws2812.New(neo)
 
+	tickInterval := scaleDuration(time.Second)
+	nextTick := time.Now().Add(tickInterval)
+	// return the time until next timer tick, and update `nextTick`
+	tick := func() time.Duration {
+		// TODO: skip a tick if needed
+		left := nextTick.Sub(time.Now())
+		nextTick = nextTick.Add(tickInterval)
+		return left
+	}
+
 	for {
 		ws.WriteColors(AllRed)
-		time.Sleep(time.Second)
+		time.Sleep(tick())
 
 		ws.WriteColors(AllBlue)
-		time.Sleep(time.Second)
+		time.Sleep(tick())
 
 		ws.WriteColors(Fun)
-		time.Sleep(time.Second)
+		time.Sleep(tick())
 	}
+}
+
+const TimeScale = 1.75
+
+func scaleDuration(d time.Duration) time.Duration {
+	fd := float32(d)
+	fd /= TimeScale
+	return time.Duration(fd)
 }
