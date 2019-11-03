@@ -24,8 +24,9 @@ func main() {
 
 	blinkOn := true
 	for {
-		ui.led.Set(blinkOn)
-		if blinkOn {
+		press := ui.btnCancel.Get() || ui.btn2Min.Get() || ui.btn10Min.Get()
+		ui.led.Set(press)
+		if press {
 			ui.neoPix.WriteColors(white)
 		} else {
 			ui.neoPix.WriteColors(black)
