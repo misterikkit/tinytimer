@@ -96,3 +96,10 @@ func scale(c color.RGBA, s fixed.Int26_6) color.RGBA {
 func add(c1, c2 color.RGBA) color.RGBA {
 	return color.RGBA{c1.R + c2.R, c1.G + c2.G, c1.B + c2.B, 0}
 }
+
+// Fill sets an entire frame to the given color.
+func Fill(frame []color.RGBA, c color.RGBA) {
+	for i := range frame {
+		frame[i] = c
+	}
+}

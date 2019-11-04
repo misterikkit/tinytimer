@@ -1,11 +1,10 @@
 package main
 
 import (
-	"image/color"
 	"time"
 
+	"github.com/misterikkit/tinytimer/animation"
 	"github.com/misterikkit/tinytimer/graphics"
-	"golang.org/x/image/math/fixed"
 )
 
 const (
@@ -17,14 +16,10 @@ const (
 func main() {
 	tickSize := time.Second / FrameRate
 	ui := setup()
-	frame := make([]color.RGBA, FrameSize)
-	s := graphics.Sprite{Color: graphics.K8SBlue, Position: 0, Size: graphics.PixelWidth * 8 / 10}
-	for i := 0; i < 7; i++ {
-		s.Position = graphics.Circ.Mul(fixed.I(i)) / 7
-		s.Render(frame)
-	}
+	spinner := animation.NewSpinner(graphics.K8SBlue)
 	for {
-		ui.neoPix.WriteColors(frame)
+		spinner.Update(time.Now())
+		ui.neoPix.WriteColors(spinner.Frame)
 		time.Sleep(tickSize)
 	}
 }
