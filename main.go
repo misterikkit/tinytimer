@@ -4,7 +4,8 @@ import (
 	"image/color"
 	"time"
 
-	gfx "github.com/misterikkit/tinytimer/graphics"
+	"github.com/misterikkit/tinytimer/graphics"
+	"golang.org/x/image/math/fixed"
 )
 
 const (
@@ -16,37 +17,14 @@ const (
 func main() {
 	tickSize := time.Second / FrameRate
 	ui := setup()
-	black := make([]color.RGBA, FrameSize)
-	white := func() []color.RGBA {
-		w := []color.RGBA{}
-		for i := 0; i < FrameSize; i++ {
-			w = append(w, gfx.White)
-		}
-		return w
-	}()
-
-	sprs := []gfx.Sprite{
-		{gfx.Red, 0.0, gfx.PixelWidth},
-		{gfx.K8SBlue, gfx.Tau / 3, gfx.PixelWidth},
-		{gfx.CSIOrange, 2 * gfx.Tau / 3, gfx.PixelWidth},
+	frame := make([]color.RGBA, FrameSize)
+	s := graphics.Sprite{Color: graphics.K8SBlue, Position: 0, Size: graphics.PixelWidth * 8 / 10}
+	for i := 0; i < 7; i++ {
+		s.Position = graphics.Circ.Mul(fixed.I(i)) / 7
+		s.Render(frame)
 	}
-	once := []bool{true, true, true}
-
 	for {
-		btns := []bool{ui.btnCancel.Get(), ui.btn2Min.Get(), ui.btn10Min.Get()}
-		for i := range btns {
-			if once[i] && btns[i] {
-				sprs[i].Render(black)
-				once[i] = false
-			}
-		}
-		press := ui.btnCancel.Get() || ui.btn2Min.Get() || ui.btn10Min.Get()
-		ui.led.Set(press)
-		if press {
-			ui.neoPix.WriteColors(white)
-		} else {
-			ui.neoPix.WriteColors(black)
-		}
+		ui.neoPix.WriteColors(frame)
 		time.Sleep(tickSize)
 	}
 }
