@@ -1,4 +1,3 @@
-// +build !js
 // +build !wasm
 
 package main

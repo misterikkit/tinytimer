@@ -16,11 +16,9 @@ func main() {
 	tickSize := time.Second / FrameRate
 	g := game.New()
 	ui := setup(g)
-	// spinner := animation.NewSpinner(graphics.K8SBlue)
 	for {
 		g.Update(time.Now())
 		ui.DisplayLEDs(*g.Animation.Frame)
-		// ui.neoPix.WriteColors(spinner.Frame)
 		time.Sleep(tickSize)
 	}
 }
