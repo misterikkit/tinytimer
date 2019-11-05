@@ -21,6 +21,7 @@ type Handle struct {
 type Spinner struct {
 	Frame []color.RGBA
 	dots  []graphics.Sprite
+	start time.Time
 }
 
 const spinnerCount = 7
@@ -33,6 +34,7 @@ func NewSpinner(c color.RGBA) Spinner {
 	s := Spinner{
 		Frame: make([]color.RGBA, graphics.FrameSize),
 		dots:  make([]graphics.Sprite, 0, spinnerCount),
+		start: time.Now(),
 	}
 	for i := 0; i < spinnerCount; i++ {
 		s.dots = append(s.dots, graphics.Sprite{Size: size, Color: c})
@@ -48,13 +50,19 @@ func (s *Spinner) Update(now time.Time) bool {
 
 	// compute fraction through the period
 	elapsed := float32(now.Sub(now.Truncate(period)).Nanoseconds())
-	p := float32(period.Nanoseconds())
-	progress := elapsed / (p)
-	// p := elapsed * 64 / period.Nanoseconds()
-	// progress := fixed.Int26_6(p)
-	// var progress fixed.Int26_6
+	progress := elapsed / float32(period.Nanoseconds())
+
+	posScale := float32(1.0)
+	if now.Before(s.start.Add(period)) {
+		posScale = progress
+	}
+
 	for i := range s.dots {
-		s.dots[i].Position = graphics.Circ*progress + divide*float32(i) // TODO: mod
+		s.dots[i].Position = graphics.Circ*progress + divide*float32(i)
+		if s.dots[i].Position > graphics.Circ {
+			s.dots[i].Position -= graphics.Circ // TODO: mod
+		}
+		s.dots[i].Position *= posScale
 		s.dots[i].Render(s.Frame)
 	}
 	return false
