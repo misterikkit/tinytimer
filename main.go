@@ -3,8 +3,7 @@ package main
 import (
 	"time"
 
-	"github.com/misterikkit/tinytimer/animation"
-	"github.com/misterikkit/tinytimer/graphics"
+	"github.com/misterikkit/tinytimer/game"
 )
 
 const (
@@ -16,10 +15,12 @@ const (
 func main() {
 	tickSize := time.Second / FrameRate
 	ui := setup()
-	spinner := animation.NewSpinner(graphics.K8SBlue)
+	g := game.New()
+	// spinner := animation.NewSpinner(graphics.K8SBlue)
 	for {
-		spinner.Update(time.Now())
-		ui.neoPix.WriteColors(spinner.Frame)
+		g.Update(time.Now())
+		ui.DisplayLEDs(*g.Animation.Frame)
+		// ui.neoPix.WriteColors(spinner.Frame)
 		time.Sleep(tickSize)
 	}
 }

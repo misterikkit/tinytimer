@@ -22,12 +22,12 @@ var (
 	toneItDown = float32(1.0) // / 5
 
 	Black = color.RGBA{}
-	White = scale(color.RGBA{0xFF, 0xFF, 0xFF, 0}, toneItDown)
-	Red   = scale(color.RGBA{0xFF, 0, 0, 0}, toneItDown)
+	White = Scale(color.RGBA{0xFF, 0xFF, 0xFF, 0}, toneItDown)
+	Red   = Scale(color.RGBA{0xFF, 0, 0, 0}, toneItDown)
 
 	// K8SBlue is used in the k8s logo
-	K8SBlue   = scale(color.RGBA{0x32, 0x6C, 0xE5, 0}, toneItDown) // H=221deg S=78.2% V=89.8%
-	CSIOrange = scale(color.RGBA{0xF5, 0x91, 0x1E, 0}, toneItDown) // H=32deg  S=87.8% V=96.1%
+	K8SBlue   = Scale(color.RGBA{0x32, 0x6C, 0xE5, 0}, toneItDown) // H=221deg S=78.2% V=89.8%
+	CSIOrange = Scale(color.RGBA{0xF5, 0x91, 0x1E, 0}, toneItDown) // H=32deg  S=87.8% V=96.1%
 )
 
 // Sprite is a one-dimensional object to be rendered onto a Frame.
@@ -58,9 +58,9 @@ func (s Sprite) Render(frame []color.RGBA) {
 		coverage := amt / (PixelWidth)             // fraction of pixel covered
 		// When rendering partial coverage, blend the color with the existing color.
 		index := (len(frame) + i) % len(frame)
-		frame[index] = add(
-			scale(s.Color, coverage),
-			scale(frame[index], 1.0-(coverage)),
+		frame[index] = Add(
+			Scale(s.Color, coverage),
+			Scale(frame[index], 1.0-(coverage)),
 		)
 	}
 }
@@ -84,8 +84,8 @@ func overlap(a1, a2, b1, b2 float32) float32 {
 	return a2 - (b1)
 }
 
-// scale performs alpha multiplying on a scale of 0 to 1, rather than 0 to 255.
-func scale(c color.RGBA, s float32) color.RGBA {
+// Scale performs alpha multiplying on a Scale of 0 to 1, rather than 0 to 255.
+func Scale(c color.RGBA, s float32) color.RGBA {
 	r := s * (float32(c.R))
 	g := s * (float32(c.G))
 	b := s * (float32(c.B))
@@ -97,7 +97,7 @@ func scale(c color.RGBA, s float32) color.RGBA {
 	}
 }
 
-func add(c1, c2 color.RGBA) color.RGBA {
+func Add(c1, c2 color.RGBA) color.RGBA {
 	return color.RGBA{c1.R + c2.R, c1.G + c2.G, c1.B + c2.B, 0}
 }
 
