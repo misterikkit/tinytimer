@@ -14,8 +14,8 @@ const (
 
 func main() {
 	tickSize := time.Second / FrameRate
-	ui := setup()
 	g := game.New()
+	ui := setup(g)
 	// spinner := animation.NewSpinner(graphics.K8SBlue)
 	for {
 		g.Update(time.Now())

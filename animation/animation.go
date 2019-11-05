@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/misterikkit/tinytimer/graphics"
+	"github.com/misterikkit/tinytimer/hack"
 )
 
 // updateFn updates an animation based on the current time, and returns true if
@@ -39,9 +40,10 @@ func NewSpinner(c color.RGBA) Spinner {
 	return s
 }
 
+var period = hack.ScaleDuration(time.Second * spinnerCount)
+
 // Update computes the current frame of animation.
 func (s *Spinner) Update(now time.Time) bool {
-	const period = time.Second * spinnerCount
 	graphics.Fill(s.Frame, graphics.Black)
 
 	// compute fraction through the period
@@ -92,7 +94,7 @@ func (l *Loader) Update(now time.Time) bool {
 
 	elapsed := float32(now.Sub(l.start).Seconds())
 	// This is reverse scaled since it is supposed to match real second ticks.
-	// elapsed *= TimeScale
+	elapsed *= hack.TimeScale
 	l.dot.Position = elapsed * graphics.Circ
 
 	l.bar.Render(l.Frame)

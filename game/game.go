@@ -5,6 +5,7 @@ import (
 
 	"github.com/misterikkit/tinytimer/animation"
 	"github.com/misterikkit/tinytimer/graphics"
+	"github.com/misterikkit/tinytimer/hack"
 )
 
 type State uint8
@@ -33,7 +34,7 @@ type Game struct {
 }
 
 func New() *Game {
-	load := animation.NewLoader(graphics.White, time.Now(), time.Now().Add((time.Second / 2)))
+	load := animation.NewLoader(graphics.White, time.Now(), time.Now().Add(hack.ScaleDuration(time.Second/2)))
 	return &Game{
 		state:      BOOT,
 		Animation:  animation.Handle{&load.Frame, load.Update},
@@ -54,10 +55,10 @@ func (g *Game) Event(e Event) {
 	case ANIMATION_DONE:
 		g.animationDone()
 	case TIMER_2M:
-		g.startTimer((2 * time.Minute))
+		g.startTimer(hack.ScaleDuration(2 * time.Minute))
 	case TIMER_10M:
-		g.startTimer((10 * time.Second))
-		// g.startTimer((10 * time.Minute))
+		g.startTimer(hack.ScaleDuration(10 * time.Second))
+		// g.startTimer(hack.ScaleDuration(10 * time.Minute))
 	case CANCEL:
 		g.cancelTimer()
 	}
@@ -69,7 +70,7 @@ func (g *Game) animationDone() {
 		g.toIdle((2 * time.Second))
 	case COUNTDOWN:
 		g.state = TIMERPOP
-		pop := animation.NewFlasher(graphics.Red, time.Now().Add((2 * time.Second)))
+		pop := animation.NewFlasher(graphics.Red, time.Now().Add(hack.ScaleDuration(2*time.Second)))
 		g.Animation = animation.Handle{&pop.Frame, pop.Update}
 	case TIMERPOP:
 		g.toIdle((1 * time.Second))

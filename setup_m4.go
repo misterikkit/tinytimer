@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"machine"
 
+	"github.com/misterikkit/tinytimer/game"
 	"github.com/misterikkit/tinytimer/ws2812"
 )
 
@@ -16,7 +17,7 @@ type userInterface struct {
 	btn10Min  machine.Pin
 }
 
-func setup() userInterface {
+func setup(g *game.Game) userInterface {
 	enableFPU()
 	neoPin := machine.D5
 	makeOutput(machine.LED)
@@ -29,6 +30,16 @@ func setup() userInterface {
 	makeInput(btnCancel)
 	makeInput(btn2Min)
 	makeInput(btn10Min)
+	g.PollInputs = func() {
+		switch {
+		case btnCancel.Get():
+			g.Event(game.CANCEL)
+		case btn2Min.Get():
+			g.Event(game.TIMER_2M)
+		case btn10Min.Get():
+			g.Event(game.TIMER_10M)
+		}
+	}
 	return userInterface{neoPix, machine.LED, btnCancel, btn2Min, btn10Min}
 }
 
