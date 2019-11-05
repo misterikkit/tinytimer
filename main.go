@@ -1,28 +1,26 @@
 package main
 
 import (
-	"math"
 	"time"
+
+	"github.com/misterikkit/tinytimer/game"
 )
 
-// Constants used in rendering
 const (
-	// Tau is better than Pi.
-	Tau = 2 * math.Pi
-
-	FrameRate = 60 // per second
-
-	FrameSize = 24 // pixels
-
-	PixelWidth = Tau / FrameSize // radians
+	FrameRate = 60
+	TimeScale = 1.75
+	FrameSize = 24
 )
 
 func main() {
-	g := NewGame()
-	setup(&g)
-	t := time.NewTicker(time.Second / FrameRate)
-	for now := range t.C {
-		g.update(now)
-		DisplayLEDs(*g.animation.f)
+	tickSize := time.Second / FrameRate
+	g := game.New()
+	ui := setup(g)
+	// spinner := animation.NewSpinner(graphics.K8SBlue)
+	for {
+		g.Update(time.Now())
+		ui.DisplayLEDs(*g.Animation.Frame)
+		// ui.neoPix.WriteColors(spinner.Frame)
+		time.Sleep(tickSize)
 	}
 }
