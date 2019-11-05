@@ -48,11 +48,7 @@ func (s *Spinner) Update(now time.Time) bool {
 
 	// compute fraction through the period
 	elapsed := float32(now.Sub(now.Truncate(period)).Nanoseconds())
-	p := float32(period.Nanoseconds())
-	progress := elapsed / (p)
-	// p := elapsed * 64 / period.Nanoseconds()
-	// progress := fixed.Int26_6(p)
-	// var progress fixed.Int26_6
+	progress := elapsed / float32(period.Nanoseconds())
 	for i := range s.dots {
 		s.dots[i].Position = graphics.Circ*progress + divide*float32(i) // TODO: mod
 		s.dots[i].Render(s.Frame)
@@ -136,7 +132,6 @@ func NewFader(start, end time.Time) Fader {
 }
 
 func (f *Fader) Update(now time.Time) bool {
-	// TODO: There is a weird blip at the beginning of each fade
 	if now.After(f.end) {
 		done := f.To.Update(now)
 		copy(f.Frame, *f.To.Frame) // Unfortunate that copy is required

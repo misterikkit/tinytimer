@@ -56,5 +56,4 @@ func enableFPU() {
 	// See section 7.3.1 in
 	// http://infocenter.arm.com/help/topic/com.arm.doc.ddi0439b/DDI0439B_cortex_m4_r0p0_trm.pdf
 	sam.SystemControl.CPACR.SetBits(0xF << 20)
-
 }

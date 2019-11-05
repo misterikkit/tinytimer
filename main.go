@@ -8,17 +8,16 @@ import (
 
 const (
 	FrameRate = 60
-	TimeScale = 1.75
-	FrameSize = 24
 )
 
 func main() {
-	tickSize := time.Second / FrameRate
 	g := game.New()
 	ui := setup(g)
 	for {
 		g.Update(time.Now())
 		ui.DisplayLEDs(*g.Animation.Frame)
-		time.Sleep(tickSize)
+		// The effective frame rate is slightly less due to Update and DisplayLEDs,
+		// but nobody will notice.
+		time.Sleep(time.Second / FrameRate)
 	}
 }
