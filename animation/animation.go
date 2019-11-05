@@ -39,14 +39,14 @@ func (s *Spinner) Update(now time.Time) bool {
 	graphics.Fill(s.Frame, graphics.Black)
 
 	// compute fraction through the period
-	elapsed := float64(now.Sub(now.Truncate(period)).Nanoseconds())
-	p := float64(period.Nanoseconds())
+	elapsed := float32(now.Sub(now.Truncate(period)).Nanoseconds())
+	p := float32(period.Nanoseconds())
 	progress := elapsed / (p)
 	// p := elapsed * 64 / period.Nanoseconds()
 	// progress := fixed.Int26_6(p)
 	// var progress fixed.Int26_6
 	for i := range s.dots {
-		s.dots[i].Position = graphics.Circ*progress + divide*float64(i) // TODO: mod
+		s.dots[i].Position = graphics.Circ*progress + divide*float32(i) // TODO: mod
 		s.dots[i].Render(s.Frame)
 	}
 	return false

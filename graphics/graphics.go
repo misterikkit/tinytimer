@@ -7,19 +7,19 @@ import (
 // Geometries
 var (
 	// Circ is 360 degrees
-	Circ = float64(360.0)
+	Circ = float32(360.0)
 
 	// FrameSize is the number of pixels in one frame.
 	FrameSize = 24
 
 	// PixelWidth is the width in degrees of one pixel.
-	PixelWidth = Circ / float64(FrameSize)
+	PixelWidth = Circ / float32(FrameSize)
 )
 
 // Colors
 var (
 	// Scale factor for LED intensity
-	toneItDown = float64(1.0) // / 5
+	toneItDown = float32(1.0) // / 5
 
 	Black = color.RGBA{}
 	White = scale(color.RGBA{0xFF, 0xFF, 0xFF, 0}, toneItDown)
@@ -34,9 +34,9 @@ var (
 type Sprite struct {
 	Color color.RGBA
 	// Center of the sprite in degrees
-	Position float64
+	Position float32
 	// Width of the sprite in degrees
-	Size float64
+	Size float32
 }
 
 // Render sets the sprite's pixels in the frame, rolling around the end of the
@@ -50,7 +50,7 @@ func (s Sprite) Render(frame []color.RGBA) {
 	lastPx := 1 + int(end/(PixelWidth)) // TODO: Do we need the extra 1?
 
 	for i := firstPx; i <= lastPx; i++ {
-		fi := float64(i)
+		fi := float32(i)
 		// amount of overlap between sprite and current pixel in degrees
 		pxStart := fi * (PixelWidth)               // degrees
 		pxEnd := pxStart + (PixelWidth)            // degrees
@@ -67,7 +67,7 @@ func (s Sprite) Render(frame []color.RGBA) {
 
 // overlap computes the size of overlap between ranges A and B. Returns 0.0 if
 // there is no overlap.
-func overlap(a1, a2, b1, b2 float64) float64 {
+func overlap(a1, a2, b1, b2 float32) float32 {
 	// Ensure that A starts to the left of B.
 	if b1 < a1 {
 		a1, a2, b1, b2 = b1, b2, a1, a2
@@ -85,10 +85,10 @@ func overlap(a1, a2, b1, b2 float64) float64 {
 }
 
 // scale performs alpha multiplying on a scale of 0 to 1, rather than 0 to 255.
-func scale(c color.RGBA, s float64) color.RGBA {
-	r := s * (float64(c.R))
-	g := s * (float64(c.G))
-	b := s * (float64(c.B))
+func scale(c color.RGBA, s float32) color.RGBA {
+	r := s * (float32(c.R))
+	g := s * (float32(c.G))
+	b := s * (float32(c.B))
 	return color.RGBA{
 		R: uint8(r),
 		G: uint8(g),
