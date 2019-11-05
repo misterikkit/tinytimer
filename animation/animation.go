@@ -4,7 +4,6 @@ import (
 	"image/color"
 	"time"
 
-	"github.com/misterikkit/tinytimer/fixed"
 	"github.com/misterikkit/tinytimer/graphics"
 )
 
@@ -19,8 +18,8 @@ type Spinner struct {
 
 const spinnerCount = 7
 
-var size = graphics.PixelWidth.Mul(fixed.From(8).Div(fixed.From(10)))
-var divide = graphics.Circ.Div(fixed.From(spinnerCount))
+var size = graphics.PixelWidth * 0.8
+var divide = graphics.Circ / spinnerCount
 
 // NewSpinner initializes a spinner animation.
 func NewSpinner(c color.RGBA) Spinner {
@@ -40,14 +39,14 @@ func (s *Spinner) Update(now time.Time) bool {
 	graphics.Fill(s.Frame, graphics.Black)
 
 	// compute fraction through the period
-	elapsed := fixed.FromI64(now.Sub(now.Truncate(period)).Nanoseconds())
-	p := fixed.FromI64(period.Nanoseconds())
-	progress := elapsed.Div(p)
+	elapsed := float64(now.Sub(now.Truncate(period)).Nanoseconds())
+	p := float64(period.Nanoseconds())
+	progress := elapsed / (p)
 	// p := elapsed * 64 / period.Nanoseconds()
 	// progress := fixed.Int26_6(p)
 	// var progress fixed.Int26_6
 	for i := range s.dots {
-		s.dots[i].Position = (graphics.Circ.Mul(progress).Add(divide.Mul(fixed.From(i)))) // TODO: mod
+		s.dots[i].Position = graphics.Circ*progress + divide*float64(i) // TODO: mod
 		s.dots[i].Render(s.Frame)
 	}
 	return false

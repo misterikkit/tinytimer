@@ -1,6 +1,7 @@
 package main
 
 import (
+	"device/sam"
 	"image/color"
 	"machine"
 
@@ -16,6 +17,7 @@ type userInterface struct {
 }
 
 func setup() userInterface {
+	enableFPU()
 	neoPin := machine.D5
 	makeOutput(machine.LED)
 	makeOutput(neoPin)
@@ -36,3 +38,10 @@ func (f *userInterface) DisplayLEDs(c []color.RGBA) {
 
 func makeInput(p machine.Pin)  { p.Configure(machine.PinConfig{Mode: machine.PinInputPulldown}) }
 func makeOutput(p machine.Pin) { p.Configure(machine.PinConfig{Mode: machine.PinOutput}) }
+
+func enableFPU() {
+	// See section 7.3.1 in
+	// http://infocenter.arm.com/help/topic/com.arm.doc.ddi0439b/DDI0439B_cortex_m4_r0p0_trm.pdf
+	sam.SystemControl.CPACR.SetBits(0xF << 20)
+
+}
