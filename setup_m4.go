@@ -30,14 +30,19 @@ func setup(g *game.Game) userInterface {
 	btn2Min := machine.D11
 	btn10Min := machine.D12
 	makeInput(btnCancel)
-	makeInput(btn2Min)
+	// makeInput(btn2Min)
 	makeInput(btn10Min)
+	configureExternalInterrupt()
+	configureExternalIntPins()
 	g.PollInputs = func() {
 		switch {
 		case btnCancel.Get():
 			g.Event(game.CANCEL)
-		case btn2Min.Get():
+		case sam.EIC.INTFLAG.HasBits(1 << 5):
+			sam.EIC.INTFLAG.SetBits(1 << 5)
 			g.Event(game.TIMER_2M)
+		// case btn2Min.Get():
+		// 	g.Event(game.TIMER_2M)
 		case btn10Min.Get():
 			g.Event(game.TIMER_10M)
 		}
@@ -81,8 +86,12 @@ func configureExternalInterrupt() {
 	sam.EIC.CTRLA.SetBits(sam.EIC_CTRLA_CKSEL_CLK_ULP32K << sam.EIC_CTRLA_CKSEL_Pos)
 
 	// 4. Configure the EIC input sense and filtering by writing the Configuration n register (CONFIG).
-	// TODO:
 	// D2==PA07==EXTINT[7], D11==PA21==EXTINT[5], D12==PA23==EXTINT[7]
+
+	// Set EXTINT[5] to rising edge, filtered
+	sam.EIC.CONFIG[0].SetBits(sam.EIC_CONFIG_SENSE5_RISE | sam.EIC_CONFIG_FILTEN5)
+	// Enable EXTINT[5]
+	sam.EIC.INTENSET.SetBits(1 << 5)
 
 	// 5. Optionally, enable the asynchronous mode.
 	// 6. Optionally, enable the debouncer mode.
@@ -91,4 +100,23 @@ func configureExternalInterrupt() {
 	sam.EIC.CTRLA.SetBits(sam.EIC_CTRLA_ENABLE)
 	for sam.EIC.SYNCBUSY.Get() != 0 {
 	}
+}
+
+func configureExternalIntPins() {
+	const A = 0
+	const pin = 21
+	sam.PORT.GROUP[A].DIRCLR.Set(1 << pin)
+	sam.PORT.GROUP[A].OUTCLR.Set(1 << pin)
+	sam.PORT.GROUP[A].PINCFG[pin].Set(
+		sam.PORT_GROUP_PINCFG_INEN | sam.PORT_GROUP_PINCFG_PULLEN | sam.PORT_GROUP_PINCFG_PMUXEN)
+	// Setting the peripheral mux to 0 selects peripheral A which is always the EIC.
+	// Pin is odd so clear the PMUXO half of the register.
+	sam.PORT.GROUP[A].PMUX[pin/2].ClearBits(sam.PORT_GROUP_PMUX_PMUXO_Msk)
+}
+
+//go:export EIC_EXTINT_5_IRQHandler
+func extInt5ISR() {
+	// Need to clear the INTFLAG for this IRQ?
+	machine.LED.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	machine.LED.Set(true)
 }
