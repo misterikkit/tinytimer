@@ -27,15 +27,17 @@ func setup(g *game.Game) userInterface {
 	neoPix := ws2812.New(neoPin)
 
 	btnCancel := machine.D2
-	btn2Min := machine.D11
-	btn10Min := machine.D12
+	btn2Min := machine.D12
+	btn10Min := machine.D11
 	makeInput(btnCancel)
-	// makeInput(btn2Min)
+	makeInput(btn2Min)
 	makeInput(btn10Min)
 	configureExternalInterrupt()
 	configureExternalIntPins()
 	g.PollInputs = func() {
 		switch {
+		case btn2Min.Get() && btn10Min.Get():
+			machine.ResetProcessor() // boot into bootloader
 		case btnCancel.Get():
 			g.Event(game.CANCEL)
 		case sam.EIC.INTFLAG.HasBits(1 << 5):
