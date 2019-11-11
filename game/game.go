@@ -27,26 +27,43 @@ const (
 	CANCEL
 )
 
-type Game struct {
-	state      State
-	Animation  animation.Handle
-	PollInputs func()
+type userInput interface {
+	BtnCancel() bool
+	Btn2Min() bool
+	Btn10Min() bool
 }
 
-func New() *Game {
+type Game struct {
+	state     State
+	Animation animation.Handle
+	ui        userInput
+}
+
+func New(ui userInput) *Game {
 	load := animation.NewLoader(graphics.White, time.Now(), time.Now().Add(hack.ScaleDuration(time.Second/2)))
 	return &Game{
-		state:      BOOT,
-		Animation:  animation.Handle{&load.Frame, load.Update},
-		PollInputs: func() {},
+		state:     BOOT,
+		Animation: animation.Handle{&load.Frame, load.Update},
+		ui:        ui,
 	}
 }
 
 func (g *Game) Update(now time.Time) {
-	g.PollInputs()
+	g.pollInputs()
 	animationDone := g.Animation.Update(now)
 	if animationDone {
 		g.Event(ANIMATION_DONE)
+	}
+}
+
+func (g *Game) pollInputs() {
+	switch {
+	case g.ui.BtnCancel():
+		g.Event(CANCEL)
+	case g.ui.Btn2Min():
+		g.Event(TIMER_2M)
+	case g.ui.Btn10Min():
+		g.Event(TIMER_10M)
 	}
 }
 

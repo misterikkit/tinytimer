@@ -7,7 +7,6 @@ import (
 	"image/color"
 	"machine"
 
-	"github.com/misterikkit/tinytimer/game"
 	"github.com/misterikkit/tinytimer/ws2812"
 	"tinygo.org/x/drivers/apa102"
 )
@@ -19,7 +18,12 @@ type userInterface struct {
 	btn10Min  machine.Pin
 }
 
-func setup(g *game.Game) userInterface {
+func (ui *userInterface) BtnCancel() bool            { return ui.btnCancel.Get() }
+func (ui *userInterface) Btn2Min() bool              { return ui.btn2Min.Get() }
+func (ui *userInterface) Btn10Min() bool             { return ui.btn10Min.Get() }
+func (ui *userInterface) DisplayLEDs(c []color.RGBA) { ui.neoPix.WriteColors(c) }
+
+func setup() userInterface {
 	enableFPU()
 	turnOffDotStar()
 
@@ -33,22 +37,8 @@ func setup(g *game.Game) userInterface {
 	makeInput(btnCancel)
 	makeInput(btn2Min)
 	makeInput(btn10Min)
-	g.PollInputs = func() {
-		switch {
-		case btnCancel.Get():
-			g.Event(game.CANCEL)
-		case btn2Min.Get():
-			g.Event(game.TIMER_2M)
-		case btn10Min.Get():
-			g.Event(game.TIMER_10M)
-		}
-	}
 
 	return userInterface{neoPix, btnCancel, btn2Min, btn10Min}
-}
-
-func (f *userInterface) DisplayLEDs(c []color.RGBA) {
-	f.neoPix.WriteColors(c)
 }
 
 func makeInput(p machine.Pin)  { p.Configure(machine.PinConfig{Mode: machine.PinInputPulldown}) }
