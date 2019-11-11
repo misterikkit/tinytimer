@@ -7,7 +7,7 @@ import (
 	"image/color"
 	"machine"
 
-	"github.com/misterikkit/tinytimer/ws2812"
+	"github.com/misterikkit/tinytimer/ws2812" // TODO: fix upstream
 	"tinygo.org/x/drivers/apa102"
 )
 
@@ -28,21 +28,21 @@ func setup() userInterface {
 	turnOffDotStar()
 
 	neoPin := machine.D5
-	makeOutput(neoPin)
+	configureOutput(neoPin)
 	neoPix := ws2812.New(neoPin)
 
 	btnCancel := machine.D2
 	btn2Min := machine.D11
 	btn10Min := machine.D12
-	makeInput(btnCancel)
-	makeInput(btn2Min)
-	makeInput(btn10Min)
+	configureInput(btnCancel)
+	configureInput(btn2Min)
+	configureInput(btn10Min)
 
 	return userInterface{neoPix, btnCancel, btn2Min, btn10Min}
 }
 
-func makeInput(p machine.Pin)  { p.Configure(machine.PinConfig{Mode: machine.PinInputPulldown}) }
-func makeOutput(p machine.Pin) { p.Configure(machine.PinConfig{Mode: machine.PinOutput}) }
+func configureInput(p machine.Pin)  { p.Configure(machine.PinConfig{Mode: machine.PinInputPulldown}) }
+func configureOutput(p machine.Pin) { p.Configure(machine.PinConfig{Mode: machine.PinOutput}) }
 
 func enableFPU() {
 	// See section 7.3.1 in
