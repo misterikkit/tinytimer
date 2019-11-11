@@ -25,7 +25,7 @@ type Spinner struct {
 
 const spinnerCount = 7
 
-var size = graphics.PixelWidth * 0.8
+var size = graphics.PixelWidth * 1.2
 var divide = graphics.Circ / spinnerCount
 
 // NewSpinner initializes a spinner animation.

@@ -12,7 +12,7 @@ const (
 
 func main() {
 	ui := setup()
-	g := game.New(&ui)
+	g := game.New(ui)
 	for {
 		g.Update(time.Now())
 		ui.DisplayLEDs(*g.Animation.Frame)
