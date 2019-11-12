@@ -35,16 +35,16 @@ type userInput interface {
 
 type Game struct {
 	state     State
-	Animation animation.Handle
+	Animation animation.Interface
 	ui        userInput
+	// TODO: Make animations reusable and store them here to avoid allocations.
 }
 
 func New(ui userInput) *Game {
-	load := animation.NewLoader(graphics.White, time.Now(), time.Now().Add(hack.ScaleDuration(time.Second/2)))
 	return &Game{
 		state:     BOOT,
-		Animation: animation.Handle{&load.Frame, load.Update},
 		ui:        ui,
+		Animation: animation.NewLoader(graphics.White, graphics.Black, time.Now(), time.Now().Add(hack.ScaleDuration(time.Second/2))),
 	}
 }
 
@@ -87,8 +87,7 @@ func (g *Game) animationDone() {
 		g.toIdle((2 * time.Second))
 	case COUNTDOWN:
 		g.state = TIMERPOP
-		pop := animation.NewFlasher(graphics.Red, time.Now().Add(hack.ScaleDuration(2*time.Second)))
-		g.Animation = animation.Handle{&pop.Frame, pop.Update}
+		g.Animation = animation.NewFlasher(graphics.Red, time.Now().Add(hack.ScaleDuration(2*time.Second)))
 	case TIMERPOP:
 		g.toIdle((1 * time.Second))
 	}
@@ -104,9 +103,7 @@ func (g *Game) startTimer(d time.Duration) {
 	case IDLE:
 		g.state = COUNTDOWN
 		// Don't scale this duration because it has been scaled in the caller.
-		load := animation.NewLoader(graphics.Black, time.Now(), time.Now().Add(d))
-		load.BG = graphics.CSIOrange
-		g.Animation = animation.Handle{&load.Frame, load.Update}
+		g.Animation = animation.NewLoader(graphics.Black, graphics.CSIOrange, time.Now(), time.Now().Add(d))
 	}
 }
 
@@ -122,8 +119,5 @@ func (g *Game) toIdle(d time.Duration) {
 	g.state = IDLE
 	spin := animation.NewSpinner(graphics.K8SBlue)
 	// Don't scale this duration because it has been scaled in the caller.
-	fade := animation.NewFader(time.Now(), time.Now().Add(d))
-	fade.From = g.Animation
-	fade.To = animation.Handle{&spin.Frame, spin.Update}
-	g.Animation = animation.Handle{&fade.Frame, fade.Update}
+	g.Animation = animation.NewFader(g.Animation, spin, time.Now(), time.Now().Add(d))
 }

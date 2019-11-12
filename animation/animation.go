@@ -9,17 +9,17 @@ import (
 	"github.com/misterikkit/tinytimer/hack"
 )
 
-// updateFn updates an animation based on the current time, and returns true if
-// the animation is complete.
-type updateFn = func(time.Time) bool
-
-type Handle struct {
-	Frame  *[]color.RGBA
-	Update updateFn
+// Interface provides a frame of pixels that changes over time.
+type Interface interface {
+	// Frame returns the animation's current pixel values.
+	Frame() []color.RGBA
+	// Update updates an animation's frame based on the current time, and returns
+	// true if the animation is complete.
+	Update(time.Time) bool
 }
 
-type Spinner struct {
-	Frame []color.RGBA
+type spinner struct {
+	frame []color.RGBA
 	dots  []graphics.Sprite
 }
 
@@ -29,56 +29,62 @@ var size = graphics.PixelWidth * 1.2
 var divide = graphics.Circ / spinnerCount
 
 // NewSpinner initializes a spinner animation.
-func NewSpinner(c color.RGBA) Spinner {
-	s := Spinner{
-		Frame: make([]color.RGBA, graphics.FrameSize),
+func NewSpinner(c color.RGBA) Interface {
+	s := spinner{
+		frame: make([]color.RGBA, graphics.FrameSize),
 		dots:  make([]graphics.Sprite, 0, spinnerCount),
 	}
 	for i := 0; i < spinnerCount; i++ {
 		s.dots = append(s.dots, graphics.Sprite{Size: size, Color: c})
 	}
-	return s
+	return &s
 }
+
+func (s *spinner) Frame() []color.RGBA { return s.frame }
 
 var period = hack.ScaleDuration(time.Second * spinnerCount)
 
 // Update computes the current frame of animation.
-func (s *Spinner) Update(now time.Time) bool {
-	graphics.Fill(s.Frame, graphics.Black)
+func (s *spinner) Update(now time.Time) bool {
+	graphics.Fill(s.frame, graphics.Black)
 
 	// compute fraction through the period
 	elapsed := float32(now.Sub(now.Truncate(period)).Nanoseconds())
 	progress := elapsed / float32(period.Nanoseconds())
 	for i := range s.dots {
 		s.dots[i].Position = graphics.Circ*progress + divide*float32(i) // TODO: mod
-		s.dots[i].Render(s.Frame)
+		s.dots[i].Render(s.frame)
 	}
 	return false
 }
 
-type Loader struct {
-	Frame      []color.RGBA
+type loader struct {
+	frame      []color.RGBA
 	bar, dot   graphics.Sprite
-	BG         color.RGBA
+	bg         color.RGBA
 	start, end time.Time
 	done       bool
 }
 
-func NewLoader(c color.RGBA, start, end time.Time) Loader {
-	return Loader{
-		Frame: make([]color.RGBA, graphics.FrameSize),
-		bar:   graphics.Sprite{Color: c},
+// NewLoader initializes a loader animation.
+func NewLoader(fg, bg color.RGBA, start, end time.Time) Interface {
+	return &loader{
+		frame: make([]color.RGBA, graphics.FrameSize),
+		bar:   graphics.Sprite{Color: fg},
+		bg:    bg,
 		dot:   graphics.Sprite{Color: graphics.White, Size: graphics.PixelWidth},
 		start: start,
 		end:   end,
 	}
 }
 
-func (l *Loader) Update(now time.Time) bool {
+func (l *loader) Frame() []color.RGBA { return l.frame }
+
+func (l *loader) Update(now time.Time) bool {
 	if l.done {
 		return true
 	}
-	graphics.Fill(l.Frame, l.BG)
+	graphics.Fill(l.frame, l.bg)
 	progress := float32(1.0)
 	if now.Before(l.end) {
 		progress = float32(now.Sub(l.start)) / float32(l.end.Sub(l.start))
@@ -93,58 +99,67 @@ func (l *Loader) Update(now time.Time) bool {
 	elapsed *= hack.TimeScale
 	l.dot.Position = elapsed * graphics.Circ
 
-	l.bar.Render(l.Frame)
-	l.dot.Render(l.Frame)
+	l.bar.Render(l.frame)
+	l.dot.Render(l.frame)
 	return false
 }
 
-type Flasher struct {
-	Frame []color.RGBA
+type flasher struct {
+	frame []color.RGBA
 	c     color.RGBA
 	end   time.Time
 }
 
-func NewFlasher(c color.RGBA, end time.Time) Flasher {
-	return Flasher{make([]color.RGBA, graphics.FrameSize), c, end}
+// NewFlasher initializes a flasher animation.
+func NewFlasher(c color.RGBA, end time.Time) Interface {
+	return &flasher{make([]color.RGBA, graphics.FrameSize), c, end}
 }
 
-func (f *Flasher) Update(now time.Time) bool {
+func (f *flasher) Frame() []color.RGBA { return f.frame }
+
+func (f *flasher) Update(now time.Time) bool {
 	progress := f.end.Sub(now).Seconds() * math.Pi * 2
 	s := float32(math.Sin(progress))
 	s = s * s // stay smooth. stay positive
 	val := graphics.Scale(f.c, s)
-	graphics.Fill(f.Frame, val)
+	graphics.Fill(f.frame, val)
 	return now.After(f.end)
 }
 
-type Fader struct {
-	Frame      []color.RGBA
-	From, To   Handle
+type fader struct {
+	frame      []color.RGBA
+	from, to   Interface
 	start, end time.Time
 }
 
-func NewFader(start, end time.Time) Fader {
-	return Fader{
-		Frame: make([]color.RGBA, graphics.FrameSize),
+// NewFader initializes a fader animation that blends from and to.
+func NewFader(from, to Interface, start, end time.Time) Interface {
+	return &fader{
+		frame: make([]color.RGBA, graphics.FrameSize),
+		from:  from,
+		to:    to,
 		start: start,
 		end:   end,
 	}
 }
 
-func (f *Fader) Update(now time.Time) bool {
+func (f *fader) Frame() []color.RGBA { return f.frame }
+
+func (f *fader) Update(now time.Time) bool {
 	if now.After(f.end) {
-		done := f.To.Update(now)
-		copy(f.Frame, *f.To.Frame) // Unfortunate that copy is required
+		done := f.to.Update(now)
+		copy(f.frame, f.to.Frame()) // Unfortunate that copy is required
+		// TODO: f.frame = f.to.Frame()
 		return done
 	}
 
-	f.From.Update(now)
-	f.To.Update(now)
+	f.from.Update(now)
+	f.to.Update(now)
 	progress := float32(now.Sub(f.start)) / float32(f.end.Sub(f.start))
-	for i := range f.Frame {
-		f.Frame[i] = graphics.Add(
-			graphics.Scale((*f.From.Frame)[i], 1.0-progress),
-			graphics.Scale((*f.To.Frame)[i], progress),
+	for i := range f.frame {
+		f.frame[i] = graphics.Add(
+			graphics.Scale(f.from.Frame()[i], 1.0-progress),
+			graphics.Scale(f.to.Frame()[i], progress),
 		)
 	}
 
