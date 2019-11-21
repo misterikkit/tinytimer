@@ -74,8 +74,8 @@ func (g *Game) Event(e Event) {
 	case TIMER_2M:
 		g.startTimer(hack.ScaleDuration(2 * time.Minute))
 	case TIMER_10M:
-		g.startTimer(hack.ScaleDuration(10 * time.Second))
-		// g.startTimer(hack.ScaleDuration(10 * time.Minute))
+		// g.startTimer(hack.ScaleDuration(10 * time.Second))
+		g.startTimer(hack.ScaleDuration(10 * time.Minute))
 	case CANCEL:
 		g.cancelTimer()
 	}
