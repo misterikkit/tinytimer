@@ -31,6 +31,7 @@ type userInput interface {
 	BtnCancel() bool
 	Btn2Min() bool
 	Btn10Min() bool
+	Sleepish()
 }
 
 // Game keeps track of the current state of the app. Calling it a game makes it more fun.
@@ -60,6 +61,9 @@ func (g *Game) Update(now time.Time) {
 }
 
 func (g *Game) pollInputs() {
+	if g.ui.Btn10Min() && g.ui.Btn2Min() && g.ui.BtnCancel() {
+		g.ui.Sleepish()
+	}
 	switch {
 	case g.ui.BtnCancel():
 		g.Event(CANCEL)

@@ -3,9 +3,11 @@
 package main
 
 import (
+	"device/arm"
 	"device/sam"
 	"image/color"
 	"machine"
+	"time"
 
 	"github.com/misterikkit/tinytimer/ws2812" // TODO: fix upstream
 	"tinygo.org/x/drivers/apa102"
@@ -24,6 +26,8 @@ type userInterface struct {
 func (ui *userInterface) BtnCancel() bool { return ui.btnCancel.Get() }
 func (ui *userInterface) Btn2Min() bool   { return ui.btn2Min.Get() }
 func (ui *userInterface) Btn10Min() bool  { return ui.btn10Min.Get() }
+
+func (ui *userInterface) Sleepish() { sleepish(ui) }
 
 // DisplayLEDs writes the given color values to the LED, applying gamma
 // correction in the process.
@@ -73,6 +77,24 @@ func turnOffDotStar() {
 	onboardDotStar.WriteColors([]color.RGBA{{}})
 	// 50% of the time, it works all of the time. ¯\_(ツ)_/¯
 	onboardDotStar.WriteColors([]color.RGBA{{}})
+}
+
+// sleepish turns off the display
+func sleepish(ui *userInterface) {
+	// blank LEDs
+	ui.DisplayLEDs(make([]color.RGBA, frameSize))
+	// basic edge detection to avoid instant wakeup
+	for ui.Btn10Min() || ui.Btn2Min() || ui.BtnCancel() {
+		time.Sleep(time.Second)
+	}
+	for !(ui.Btn10Min() || ui.Btn2Min() || ui.BtnCancel()) {
+		time.Sleep(time.Second)
+	}
+	ui.DisplayLEDs([]color.RGBA{{128, 128, 0, 0}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}})
+	for ui.Btn10Min() || ui.Btn2Min() || ui.BtnCancel() {
+		time.Sleep(100 * time.Millisecond)
+	}
+	arm.SystemReset()
 }
 
 // gamma correction for 8-bit color values yoinked from
