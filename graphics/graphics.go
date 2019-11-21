@@ -19,7 +19,7 @@ var (
 // Colors
 var (
 	// Scale factor for LED intensity
-	toneItDown = float32(0.8)
+	toneItDown = float32(0.5)
 
 	Black = color.RGBA{}
 	White = Scale(color.RGBA{0xFF, 0xFF, 0xFF, 0}, toneItDown)
