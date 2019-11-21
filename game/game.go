@@ -33,6 +33,7 @@ type userInput interface {
 	Btn10Min() bool
 }
 
+// Game keeps track of the current state of the app. Calling it a game makes it more fun.
 type Game struct {
 	state     State
 	Animation animation.Interface
@@ -40,6 +41,7 @@ type Game struct {
 	// TODO: Make animations reusable and store them here to avoid allocations.
 }
 
+// New creates a new game in the "boot animation" state.
 func New(ui userInput) *Game {
 	return &Game{
 		state:     BOOT,
@@ -48,6 +50,7 @@ func New(ui userInput) *Game {
 	}
 }
 
+// Update checks inputs and updates game state & animations based on the current time.
 func (g *Game) Update(now time.Time) {
 	g.pollInputs()
 	animationDone := g.Animation.Update(now)
@@ -67,6 +70,8 @@ func (g *Game) pollInputs() {
 	}
 }
 
+// Event signals the game that an event has occurred. These are inputs into the
+// state machine.
 func (g *Game) Event(e Event) {
 	switch e {
 	case ANIMATION_DONE:
