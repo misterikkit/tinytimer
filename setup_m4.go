@@ -27,7 +27,7 @@ func (ui *userInterface) BtnCancel() bool { return ui.btnCancel.Get() }
 func (ui *userInterface) Btn2Min() bool   { return ui.btn2Min.Get() }
 func (ui *userInterface) Btn10Min() bool  { return ui.btn10Min.Get() }
 
-func (ui *userInterface) Sleepish() { sleepish(ui) }
+func (ui *userInterface) Sleepish() { hibernate(ui) }
 
 // DisplayLEDs writes the given color values to the LED, applying gamma
 // correction in the process.
@@ -79,22 +79,29 @@ func turnOffDotStar() {
 	onboardDotStar.WriteColors([]color.RGBA{{}})
 }
 
-// sleepish turns off the display
-func sleepish(ui *userInterface) {
-	// blank LEDs
+// hibernate turns off the display and puts the device into the lowest available
+// power mode. There is no waking up from this.
+// TODO: switch from power level OFF to power level BACKUP so that wakeup is
+// possible.
+func hibernate(ui *userInterface) {
+	/////////////
+	// Blank LEDs
 	ui.DisplayLEDs(make([]color.RGBA, frameSize))
-	// basic edge detection to avoid instant wakeup
-	for ui.Btn10Min() || ui.Btn2Min() || ui.BtnCancel() {
-		time.Sleep(time.Second)
+	time.Sleep(time.Second)
+
+	//////////////////////////
+	// Enter OFF sleep mode
+	// TODO: Use PM_SLEEPCFG_SLEEPMODE_BACKUP, since that allows wakeup from external interrupt.
+	sam.PM.SLEEPCFG.Set(sam.PM_SLEEPCFG_SLEEPMODE_OFF)
+	// Need to wait for SLEEPCFG propagation?
+	for !sam.PM.INTFLAG.HasBits(sam.PM_INTFLAG_SLEEPRDY) {
 	}
-	for !(ui.Btn10Min() || ui.Btn2Min() || ui.BtnCancel()) {
-		time.Sleep(time.Second)
-	}
-	ui.DisplayLEDs([]color.RGBA{{128, 128, 0, 0}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}})
-	for ui.Btn10Min() || ui.Btn2Min() || ui.BtnCancel() {
-		time.Sleep(100 * time.Millisecond)
-	}
-	arm.SystemReset()
+	arm.Asm("wfi")
+
+	/////////////////////////////
+	// After wake-up, reset board
+	// arm.SystemReset()
+
 }
 
 // gamma correction for 8-bit color values yoinked from
