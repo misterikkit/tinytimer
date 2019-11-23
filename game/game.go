@@ -6,6 +6,7 @@ import (
 	"github.com/misterikkit/tinytimer/animation"
 	"github.com/misterikkit/tinytimer/graphics"
 	"github.com/misterikkit/tinytimer/hack"
+	"github.com/misterikkit/tinytimer/input"
 )
 
 type State uint8
@@ -27,50 +28,42 @@ const (
 	CANCEL
 )
 
-type userInput interface {
-	BtnCancel() bool
-	Btn2Min() bool
-	Btn10Min() bool
-	Sleepish()
-}
-
 // Game keeps track of the current state of the app. Calling it a game makes it more fun.
 type Game struct {
 	state     State
 	Animation animation.Interface
-	ui        userInput
 	// TODO: Make animations reusable and store them here to avoid allocations.
 }
 
 // New creates a new game in the "boot animation" state.
-func New(ui userInput) *Game {
-	return &Game{
+func New(ui *input.Manager) *Game {
+	g := &Game{
 		state:     BOOT,
-		ui:        ui,
 		Animation: animation.NewLoader(graphics.White, graphics.Black, time.Now(), time.Now().Add(hack.ScaleDuration(time.Second/2))),
 	}
+	ui.AddHandler(input.A_Fall, g.handleInput)
+	ui.AddHandler(input.B_Fall, g.handleInput)
+	ui.AddHandler(input.C_Fall, g.handleInput)
+	return g
 }
 
 // Update checks inputs and updates game state & animations based on the current time.
 func (g *Game) Update(now time.Time) {
-	g.pollInputs()
 	animationDone := g.Animation.Update(now)
 	if animationDone {
 		g.Event(ANIMATION_DONE)
 	}
 }
 
-func (g *Game) pollInputs() {
-	if g.ui.Btn10Min() && g.ui.Btn2Min() && g.ui.BtnCancel() {
-		g.ui.Sleepish()
-	}
-	switch {
-	case g.ui.BtnCancel():
+// handleInput converts input events to game events.
+func (g *Game) handleInput(e input.Event) {
+	switch e {
+	case input.A_Fall:
 		g.Event(CANCEL)
-	case g.ui.Btn2Min():
-		g.Event(TIMER_2M)
-	case g.ui.Btn10Min():
+	case input.B_Fall:
 		g.Event(TIMER_10M)
+	case input.C_Fall:
+		g.Event(TIMER_2M)
 	}
 }
 

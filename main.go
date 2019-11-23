@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/misterikkit/tinytimer/game"
+	"github.com/misterikkit/tinytimer/input"
 )
 
 const (
@@ -12,8 +13,11 @@ const (
 
 func main() {
 	ui := setup()
-	g := game.New(ui)
+	mgr := input.NewManager(ui.btnCancel.Get, ui.btn10Min.Get, ui.btn2Min.Get)
+	mgr.AddHandler(input.ABC_Fall, func(input.Event) { ui.Sleepish() })
+	g := game.New(mgr)
 	for {
+		mgr.Poll()
 		g.Update(time.Now())
 		ui.DisplayLEDs(g.Animation.Frame())
 		// The effective frame rate is slightly less due to Update and DisplayLEDs,
