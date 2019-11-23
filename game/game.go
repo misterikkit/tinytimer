@@ -1,6 +1,7 @@
 package game
 
 import (
+	"image/color"
 	"time"
 
 	"github.com/misterikkit/tinytimer/animation"
@@ -54,6 +55,9 @@ func (g *Game) Update(now time.Time) {
 		g.Event(ANIMATION_DONE)
 	}
 }
+
+// Frame returns the current animation's frame.
+func (g *Game) Frame() []color.RGBA { return g.Animation.Frame() }
 
 // handleInput converts input events to game events.
 func (g *Game) handleInput(e input.Event) {
