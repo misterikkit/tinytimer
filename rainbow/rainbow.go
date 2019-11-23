@@ -10,7 +10,7 @@ import (
 type Egg struct{ offset float64 }
 
 func (e *Egg) Update(t time.Time) {
-	const period = 10 * time.Second
+	const period = 7 * time.Second
 	e.offset = 360.0 * t.Sub(t.Truncate(period)).Seconds() / period.Seconds()
 }
 
