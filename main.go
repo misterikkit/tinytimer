@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/misterikkit/tinytimer/apps/rainbow"
+	"github.com/misterikkit/tinytimer/apps/simon"
 	"github.com/misterikkit/tinytimer/apps/timer"
 	"github.com/misterikkit/tinytimer/easter"
 	"github.com/misterikkit/tinytimer/input"
@@ -30,6 +31,8 @@ func main() {
 		switch eggs.Get() {
 		case easter.Rainbow:
 			app = rainbow.New()
+		case easter.Simon:
+			app = simon.New(mgr)
 		}
 
 		// Compute and display next frame for the current app.
