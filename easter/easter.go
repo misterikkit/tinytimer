@@ -14,9 +14,15 @@ var leftRightSpam = []input.Event{
 	input.B_Fall, input.C_Fall,
 }
 
+var cycle = []input.Event{
+	input.A_Fall, input.B_Fall, input.C_Fall,
+	input.A_Fall, input.B_Fall, input.C_Fall,
+}
+
 const (
 	None uint8 = iota
 	Rainbow
+	Simon
 )
 
 type Egger struct {
@@ -28,6 +34,7 @@ type Egger struct {
 func New(ui *input.Manager) *Egger {
 	e := new(Egger)
 	e.current = None
+	ui.AddHandler(input.A_Fall, e.handle)
 	ui.AddHandler(input.B_Fall, e.handle)
 	ui.AddHandler(input.C_Fall, e.handle)
 	return e
@@ -45,8 +52,11 @@ func (e *Egger) handle(evt input.Event) {
 	}
 	e.history = append(e.history, evt)
 	e.last = time.Now()
-	if match(e.history, leftRightSpam) {
+	switch {
+	case match(e.history, leftRightSpam):
 		e.current = Rainbow
+	case match(e.history, cycle):
+		e.current = Simon
 	}
 }
 
