@@ -1,11 +1,9 @@
 package easter
 
 import (
-	"image/color"
 	"time"
 
 	"github.com/misterikkit/tinytimer/input"
-	"github.com/misterikkit/tinytimer/rainbow"
 )
 
 var leftRightSpam = []input.Event{
@@ -16,25 +14,31 @@ var leftRightSpam = []input.Event{
 	input.B_Fall, input.C_Fall,
 }
 
-// TODO: this needs a better home
-type App interface {
-	Update(time.Time)
-	Frame() []color.RGBA
-}
+const (
+	None uint8 = iota
+	Rainbow
+)
 
 type Egger struct {
-	rec     func(App)
+	current uint8
 	history []input.Event
 	last    time.Time
 }
 
-func New(ui *input.Manager, receive func(App)) *Egger {
+func New(ui *input.Manager) *Egger {
 	e := new(Egger)
+	e.current = None
 	ui.AddHandler(input.B_Fall, e.handle)
 	ui.AddHandler(input.C_Fall, e.handle)
 	return e
 }
 
+// Get returns the current easter egg and clears it so as not to trigger twice.
+func (e *Egger) Get() uint8 {
+	ret := e.current
+	e.current = None
+	return ret
+}
 func (e *Egger) handle(evt input.Event) {
 	if time.Since(e.last) > time.Second {
 		e.history = e.history[:0] // this should hopefully reuse memory
@@ -42,7 +46,7 @@ func (e *Egger) handle(evt input.Event) {
 	e.history = append(e.history, evt)
 	e.last = time.Now()
 	if match(e.history, leftRightSpam) {
-		e.rec(new(rainbow.Egg))
+		e.current = Rainbow
 	}
 }
 
