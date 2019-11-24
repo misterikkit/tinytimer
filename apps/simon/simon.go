@@ -22,13 +22,32 @@ const (
 	intro state = iota
 	displaying
 	userInput
+	correct
+	incorrect
+)
+
+var (
+	bgWhite = []graphics.Sprite{
+		{Size: graphics.PixelWidth, Position: graphics.Circ * 1 / 6, Color: graphics.White},
+		{Size: graphics.PixelWidth, Position: graphics.Circ * 3 / 6, Color: graphics.White},
+		{Size: graphics.PixelWidth, Position: graphics.Circ * 5 / 6, Color: graphics.White},
+	}
+	bgGreen = []graphics.Sprite{
+		{Size: graphics.PixelWidth, Position: graphics.Circ * 1 / 6, Color: graphics.Green},
+		{Size: graphics.PixelWidth, Position: graphics.Circ * 3 / 6, Color: graphics.Green},
+		{Size: graphics.PixelWidth, Position: graphics.Circ * 5 / 6, Color: graphics.Green},
+	}
+	bgRed = []graphics.Sprite{
+		{Size: graphics.PixelWidth, Position: graphics.Circ * 1 / 6, Color: graphics.Red},
+		{Size: graphics.PixelWidth, Position: graphics.Circ * 3 / 6, Color: graphics.Red},
+		{Size: graphics.PixelWidth, Position: graphics.Circ * 5 / 6, Color: graphics.Red},
+	}
 )
 
 type App struct {
 	// graphics
 	frame   []color.RGBA
 	sprites []graphics.Sprite
-	bg      []graphics.Sprite
 	// in input mode, indicates which buttons are down
 	echo []bool
 
@@ -49,14 +68,9 @@ func New(ui *input.Manager) *App {
 			{Size: 3 * graphics.PixelWidth, Position: graphics.Circ * 2 / 3, Color: graphics.Green},
 			{Size: 3 * graphics.PixelWidth, Position: graphics.Circ * 1 / 3, Color: graphics.Blue},
 		},
-		bg: []graphics.Sprite{
-			{Size: graphics.PixelWidth, Position: graphics.Circ * 1 / 6, Color: graphics.White},
-			{Size: graphics.PixelWidth, Position: graphics.Circ * 3 / 6, Color: graphics.White},
-			{Size: graphics.PixelWidth, Position: graphics.Circ * 5 / 6, Color: graphics.White},
-		},
 		echo: make([]bool, 3),
 
-		state:           userInput,
+		state:           intro,
 		lastStateChange: time.Now(),
 	}
 	ui.AddHandler(input.A_Fall, s.handleInput)
@@ -71,24 +85,83 @@ func New(ui *input.Manager) *App {
 	return s
 }
 
-func (s *App) Update(time.Time) {
-	graphics.Fill(s.frame, graphics.Black)
-	for i := range s.bg {
-		s.bg[i].Render(s.frame)
-	}
-	if s.state == userInput {
-		for i := range s.echo {
-			if !s.echo[i] {
-				continue
-			}
-			s.sprites[i].Render(s.frame)
-		}
-	}
-
-}
-
 func (s *App) Frame() []color.RGBA { return s.frame }
 
+func (s *App) Update(now time.Time) {
+	graphics.Fill(s.frame, graphics.Black)
+	var bg []graphics.Sprite
+	switch s.state {
+	case correct:
+		bg = bgGreen
+	case incorrect:
+		bg = bgRed
+	default:
+		bg = bgWhite
+	}
+	for i := range bg {
+		bg[i].Render(s.frame)
+	}
+
+	switch s.state {
+	case intro:
+		for i := range s.sprites {
+			s.sprites[i].Render(s.frame)
+		}
+		if now.Sub(s.lastStateChange) > time.Second {
+			s.state = correct
+			s.lastStateChange = now
+		}
+	case displaying:
+		s.doDisplay(now)
+	case userInput:
+		s.doEcho()
+	case correct:
+		if now.Sub(s.lastStateChange) > time.Second {
+			s.collectedInput = nil
+			s.sequence = append(s.sequence, a) // TODO: make this random
+			s.state = displaying
+			s.lastStateChange = now
+		}
+
+	case incorrect:
+		if now.Sub(s.lastStateChange) > time.Second {
+			s.collectedInput = nil
+			s.sequence = nil
+			s.state = intro
+			s.lastStateChange = now
+		}
+	}
+}
+
+func (s *App) doDisplay(now time.Time) {
+	dwell := time.Second // TODO: speed up
+	const idle = 100 * time.Millisecond
+	tokenDuration := dwell + idle
+	progress := now.Sub(s.lastStateChange)
+	offset := int(progress) / int(tokenDuration)
+	if offset >= len(s.sequence) {
+		s.state = userInput
+		s.lastStateChange = now
+		return
+	}
+
+	// Brief blank period between tokens
+	if (progress - progress.Truncate(tokenDuration)) < idle {
+		return
+	}
+	s.sprites[s.sequence[offset]].Render(s.frame)
+}
+
+func (s *App) doEcho() {
+	for i := range s.echo {
+		if !s.echo[i] {
+			continue
+		}
+		s.sprites[i].Render(s.frame)
+	}
+}
+
+// handleInput appends a user input to the collected input.
 func (s *App) handleInput(e input.Event) {
 	if s.state != userInput {
 		return
@@ -101,8 +174,22 @@ func (s *App) handleInput(e input.Event) {
 	case input.C_Fall:
 		s.collectedInput = append(s.collectedInput, c)
 	}
+
+	// Check if last input was correct
+	i := len(s.collectedInput) - 1
+	if s.collectedInput[i] != s.sequence[i] {
+		s.state = incorrect
+		s.lastStateChange = time.Now() // TODO: plumb this in?
+	}
+	// Check if we reached the end of sequence
+	if len(s.collectedInput) == len(s.sequence) {
+		s.state = correct
+		s.lastStateChange = time.Now() // TODO: plumb this in?
+	}
 }
 
+// handleEcho keeps track of current button state, since plumbing the pollable
+// inputs into this app is not desirable.
 func (s *App) handleEcho(e input.Event) {
 	switch e {
 	case input.A_Fall:
