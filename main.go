@@ -25,7 +25,6 @@ func main() {
 	mgr.AddHandler(input.ABC_Fall, func(input.Event) { ui.Sleepish() })
 	app := App(timer.New(mgr))
 	eggs := easter.New(mgr)
-	// mgr.AddHandler(input.BC_Fall, func(input.Event) { g = &rainbow.Egg{} })
 	for {
 		mgr.Poll()
 		if eggs.Get() == easter.Rainbow {
