@@ -4,6 +4,7 @@ import (
 	"image/color"
 	"time"
 
+	"github.com/misterikkit/tinytimer/apps/pong"
 	"github.com/misterikkit/tinytimer/apps/rainbow"
 	"github.com/misterikkit/tinytimer/apps/timer"
 	"github.com/misterikkit/tinytimer/easter"
@@ -30,6 +31,8 @@ func main() {
 		switch eggs.Get() {
 		case easter.Rainbow:
 			app = rainbow.New()
+		case easter.Pong:
+			app = pong.New()
 		}
 
 		// Compute and display next frame for the current app.

@@ -17,6 +17,7 @@ var leftRightSpam = []input.Event{
 const (
 	None uint8 = iota
 	Rainbow
+	Pong
 )
 
 type Egger struct {
