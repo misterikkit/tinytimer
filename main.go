@@ -10,9 +10,7 @@ import (
 	"github.com/misterikkit/tinytimer/input"
 )
 
-const (
-	FrameRate = 60
-)
+const frameRate = 60
 
 type App interface {
 	Update(time.Time)
@@ -20,20 +18,26 @@ type App interface {
 }
 
 func main() {
-	ui := setup()
+	ui := setup() // initialize hardware
 	mgr := input.NewManager(ui.btnCancel.Get, ui.btn10Min.Get, ui.btn2Min.Get)
+	// Entering sleep mode is always available regardless of current app, so handle it here.
 	mgr.AddHandler(input.ABC_Fall, func(input.Event) { ui.Sleepish() })
+	// Set up initial app and easter egg launcher.
 	app := App(timer.New(mgr))
 	eggs := easter.New(mgr)
 	for {
-		mgr.Poll()
-		if eggs.Get() == easter.Rainbow {
+		mgr.Poll() // Invokes appropriate handlers.
+		switch eggs.Get() {
+		case easter.Rainbow:
 			app = rainbow.New()
 		}
+
+		// Compute and display next frame for the current app.
 		app.Update(time.Now())
 		ui.DisplayLEDs(app.Frame())
+
 		// The effective frame rate is slightly less due to Update and DisplayLEDs,
 		// but nobody will notice.
-		time.Sleep(time.Second / FrameRate)
+		time.Sleep(time.Second / frameRate)
 	}
 }
