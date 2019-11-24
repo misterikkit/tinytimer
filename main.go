@@ -4,10 +4,10 @@ import (
 	"image/color"
 	"time"
 
+	"github.com/misterikkit/tinytimer/apps/rainbow"
 	"github.com/misterikkit/tinytimer/apps/timer"
 	"github.com/misterikkit/tinytimer/easter"
 	"github.com/misterikkit/tinytimer/input"
-	"github.com/misterikkit/tinytimer/rainbow"
 )
 
 const (
@@ -29,7 +29,7 @@ func main() {
 	for {
 		mgr.Poll()
 		if eggs.Get() == easter.Rainbow {
-			app = new(rainbow.Egg)
+			app = rainbow.New()
 		}
 		app.Update(time.Now())
 		ui.DisplayLEDs(app.Frame())
