@@ -29,8 +29,10 @@ type Egger struct {
 func New(ui *input.Manager) *Egger {
 	e := new(Egger)
 	e.current = None
+	ui.AddHandler(input.A_Fall, e.handle)
 	ui.AddHandler(input.B_Fall, e.handle)
 	ui.AddHandler(input.C_Fall, e.handle)
+	ui.AddHandler(input.BC_Fall, e.handle)
 	return e
 }
 
@@ -49,6 +51,9 @@ func (e *Egger) handle(evt input.Event) {
 	if match(e.history, leftRightSpam) {
 		e.current = Rainbow
 	}
+	if matchKonami(e.history) {
+		e.current = Pong
+	}
 }
 
 func match(a, b []input.Event) bool {
@@ -61,4 +66,45 @@ func match(a, b []input.Event) bool {
 		}
 	}
 	return true
+}
+
+// The sequence is A, A, BC, BC, B, C, B, C.
+// But we have to ignore the extra B and C that come with each BC.
+func matchKonami(h []input.Event) bool {
+	if len(h) != 12 {
+		return false
+	}
+	upup := h[:2]
+	if !match(upup, []input.Event{input.A_Fall, input.A_Fall}) {
+		return false
+	}
+	lrlr := h[8:]
+	if !match(lrlr, []input.Event{input.B_Fall, input.C_Fall, input.B_Fall, input.C_Fall}) {
+		return false
+	}
+	d1 := h[2:5]
+	if !dumbMatch(d1) {
+		return false
+	}
+	d2 := h[5:8]
+	if !dumbMatch(d2) {
+		return false
+	}
+	return true
+}
+
+// Checks if input matches one "down" event.
+func dumbMatch(d []input.Event) bool {
+	b, c, bc := false, false, false
+	for i := range d {
+		switch d[i] {
+		case input.B_Fall:
+			b = true
+		case input.C_Fall:
+			c = true
+		case input.BC_Fall:
+			bc = true
+		}
+	}
+	return b && c && bc
 }
