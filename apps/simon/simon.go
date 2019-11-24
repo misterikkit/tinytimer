@@ -120,7 +120,7 @@ func (s *App) Update(now time.Time) {
 	case correct:
 		if now.Sub(s.lastStateChange) > time.Second {
 			s.collectedInput = nil
-			s.sequence = append(s.sequence, token(rand.Int()%3)) // TODO: make this random
+			s.sequence = append(s.sequence, token(rand.Int()%3))
 			s.state = displaying
 			s.lastStateChange = now
 		}
