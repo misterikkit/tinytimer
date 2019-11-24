@@ -12,6 +12,7 @@ const (
 	Rainbow
 	Pong
 	ColorPicker
+	Simon
 )
 
 type Egger struct {
