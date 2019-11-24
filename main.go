@@ -30,6 +30,7 @@ func main() {
 		rainbow = rainbow.New()
 		pong    = pong.New(mgr)
 		picker  = colorpicker.New(mgr)
+		simon   = simon.New(mgr)
 	)
 	app := App(timer)
 	for {
@@ -54,6 +55,11 @@ func main() {
 			if isTimer(app) {
 				picker.Reset()
 				app = picker
+			}
+		case easter.Simon:
+			if isTimer(app) {
+				simon.Reset()
+				app = simon
 			}
 		}
 
