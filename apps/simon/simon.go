@@ -2,6 +2,7 @@ package simon
 
 import (
 	"image/color"
+	"math/rand"
 	"time"
 
 	"github.com/misterikkit/tinytimer/graphics"
@@ -61,6 +62,7 @@ type App struct {
 }
 
 func New(ui *input.Manager) *App {
+	rand.Seed(time.Now().UnixNano())
 	s := &App{
 		frame: make([]color.RGBA, 24),
 		sprites: []graphics.Sprite{
@@ -118,7 +120,7 @@ func (s *App) Update(now time.Time) {
 	case correct:
 		if now.Sub(s.lastStateChange) > time.Second {
 			s.collectedInput = nil
-			s.sequence = append(s.sequence, a) // TODO: make this random
+			s.sequence = append(s.sequence, token(rand.Int()%3)) // TODO: make this random
 			s.state = displaying
 			s.lastStateChange = now
 		}
@@ -180,6 +182,7 @@ func (s *App) handleInput(e input.Event) {
 	if s.collectedInput[i] != s.sequence[i] {
 		s.state = incorrect
 		s.lastStateChange = time.Now() // TODO: plumb this in?
+		return
 	}
 	// Check if we reached the end of sequence
 	if len(s.collectedInput) == len(s.sequence) {
