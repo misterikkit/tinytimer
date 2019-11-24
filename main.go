@@ -4,8 +4,8 @@ import (
 	"image/color"
 	"time"
 
+	"github.com/misterikkit/tinytimer/apps/timer"
 	"github.com/misterikkit/tinytimer/easter"
-	"github.com/misterikkit/tinytimer/game"
 	"github.com/misterikkit/tinytimer/input"
 	"github.com/misterikkit/tinytimer/rainbow"
 )
@@ -23,16 +23,16 @@ func main() {
 	ui := setup()
 	mgr := input.NewManager(ui.btnCancel.Get, ui.btn10Min.Get, ui.btn2Min.Get)
 	mgr.AddHandler(input.ABC_Fall, func(input.Event) { ui.Sleepish() })
-	g := App(game.New(mgr))
+	app := App(timer.New(mgr))
 	eggs := easter.New(mgr)
 	// mgr.AddHandler(input.BC_Fall, func(input.Event) { g = &rainbow.Egg{} })
 	for {
 		mgr.Poll()
 		if eggs.Get() == easter.Rainbow {
-			g = new(rainbow.Egg)
+			app = new(rainbow.Egg)
 		}
-		g.Update(time.Now())
-		ui.DisplayLEDs(g.Frame())
+		app.Update(time.Now())
+		ui.DisplayLEDs(app.Frame())
 		// The effective frame rate is slightly less due to Update and DisplayLEDs,
 		// but nobody will notice.
 		time.Sleep(time.Second / FrameRate)
