@@ -136,11 +136,12 @@ func (s *App) Update(now time.Time) {
 }
 
 func (s *App) doDisplay(now time.Time) {
-	dwell := time.Second // TODO: speed up
+	dwell := 750 * time.Millisecond // TODO: speed up as sequence gets longer
 	const idle = 100 * time.Millisecond
 	tokenDuration := dwell + idle
-	progress := now.Sub(s.lastStateChange)
+	progress := now.Sub(s.lastStateChange) // negative value should be impossible
 	offset := int(progress) / int(tokenDuration)
+
 	if offset >= len(s.sequence) {
 		s.state = userInput
 		s.lastStateChange = now
@@ -156,10 +157,9 @@ func (s *App) doDisplay(now time.Time) {
 
 func (s *App) doEcho() {
 	for i := range s.echo {
-		if !s.echo[i] {
-			continue
+		if s.echo[i] {
+			s.sprites[i].Render(s.frame)
 		}
-		s.sprites[i].Render(s.frame)
 	}
 }
 
