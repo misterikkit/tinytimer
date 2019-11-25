@@ -10,10 +10,10 @@ import (
 
 // measured in degrees
 const (
-	fieldLeft  = 270.0
-	fieldRight = fieldLeft + 180.0
+	fieldLeft  = 270.0 + graphics.PixelWidth
+	fieldRight = fieldLeft + 180.0 - 2*graphics.PixelWidth
 	fieldMid   = (fieldLeft + fieldRight) / 2
-	goalSize   = 3.0 * graphics.PixelWidth
+	goalSize   = 2.0 * graphics.PixelWidth
 	minSpeed   = 130.0 // per second
 	maxSpeed   = 300.0 // per second
 )
@@ -53,6 +53,7 @@ type App struct {
 	scoreBG         graphics.Sprite
 	frame           []color.RGBA
 	lastUpdate      time.Time
+	lastPlayerInput [2]time.Time
 }
 
 // New returns a fresh game of pong
@@ -61,7 +62,7 @@ func New(ui *input.Manager) *App {
 		p1: player{
 			paddle: graphics.Sprite{
 				Color:    purple,
-				Position: fieldLeft,
+				Position: graphics.Circ * 3 / 4,
 				Size:     2.0 * graphics.PixelWidth,
 			},
 			scoreBar: graphics.Sprite{Color: purple},
@@ -69,7 +70,7 @@ func New(ui *input.Manager) *App {
 		p2: player{
 			paddle: graphics.Sprite{
 				Color:    green,
-				Position: fieldRight,
+				Position: graphics.Circ / 4,
 				Size:     2.0 * graphics.PixelWidth,
 			},
 			scoreBar: graphics.Sprite{Color: green},
@@ -107,13 +108,12 @@ func (p *App) Update(now time.Time) {
 		// Update game state
 		dt := now.Sub(p.lastUpdate)
 		p.ball.Position += p.ball.speed * float32(dt.Seconds())
-		if p.ball.RightEdge() >= p.p2.paddle.LeftEdge() {
-			p.ball.Position = p.p2.paddle.LeftEdge() - p.ball.Size/2
+		if p.ball.Position >= fieldRight {
+			p.ball.Position = fieldRight
 			// p1 scores
 			p.score(&p.p1)
-		}
-		if p.ball.LeftEdge() <= p.p1.paddle.RightEdge() {
-			p.ball.Position = p.p1.paddle.RightEdge() + p.ball.Size/2
+		} else if p.ball.Position <= fieldLeft {
+			p.ball.Position = fieldLeft
 			// p2 scores
 			p.score(&p.p2)
 		}
@@ -123,12 +123,12 @@ func (p *App) Update(now time.Time) {
 		// Start a new volley
 		if now.Sub(p.lastStateChange) > time.Second {
 			p.ball.Color = graphics.White
-			p.ball.Position = fieldMid
 			if p.ball.speed < 0 {
 				p.ball.speed = -minSpeed
 			} else {
 				p.ball.speed = minSpeed // does this need flip?
 			}
+			p.ball.Position = fieldMid // Maybe start further than halfway?
 			p.state = volley
 			p.lastStateChange = now
 		}
@@ -171,21 +171,40 @@ func (p *App) reset(input.Event) {
 	p.p2.score = 0
 	p.ball.Position = fieldMid
 	p.ball.speed = minSpeed
+	// TODO: reset score bars
 }
 
 func (p *App) handle(e input.Event) {
 	zone := struct{ l, r float32 }{}
+	var lastInput time.Time
 	switch e {
 	case input.B_Rise:
 		// player 1
+		lastInput = p.lastPlayerInput[0]
+		p.lastPlayerInput[0] = time.Now()
 		zone.l = fieldLeft
 		zone.r = fieldLeft + goalSize
+		// Make sure player can't "catch" the ball as it leaves their zone.
+		if p.ball.speed > 0 {
+			return
+		}
 	case input.C_Rise:
 		// player 2
+		lastInput = p.lastPlayerInput[1]
+		p.lastPlayerInput[1] = time.Now()
 		zone.r = fieldRight
 		zone.l = fieldRight - goalSize
+		// Make sure player can't "catch" the ball as it leaves their zone.
+		if p.ball.speed < 0 {
+			return
+		}
 	}
-	if p.ball.Position >= zone.r && p.ball.Position <= zone.l {
+
+	// Ignore user input if they've pressed their button too recently (spam).
+	if time.Since(lastInput) < 100*time.Millisecond {
+		return
+	}
+	if p.ball.Position >= zone.l && p.ball.Position <= zone.r {
 		p.ball.speed = -p.ball.speed
 	}
 	// TODO: variable speed
