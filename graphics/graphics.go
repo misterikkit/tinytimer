@@ -65,9 +65,6 @@ func (s Sprite) Render(frame []color.RGBA) {
 	}
 }
 
-func (s Sprite) RightEdge() float32 { return s.Position + s.Size/2 }
-func (s Sprite) LeftEdge() float32  { return s.Position - s.Size/2 }
-
 // overlap computes the size of overlap between ranges A and B. Returns 0.0 if
 // there is no overlap.
 func overlap(a1, a2, b1, b2 float32) float32 {
