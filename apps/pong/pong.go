@@ -21,9 +21,8 @@ const (
 const maxPoints = 5 // and then you win
 
 var (
-	// TODO: increase chroma, decrease luminescence.
-	purple = color.RGBA{172, 78, 200, 0}
-	green  = color.RGBA{151, 211, 75, 0}
+	purple = color.RGBA{183, 95, 179, 0}
+	green  = color.RGBA{105, 167, 91, 0}
 )
 
 type player struct {
