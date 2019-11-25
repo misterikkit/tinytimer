@@ -5,7 +5,7 @@ import (
 )
 
 // Geometries
-var (
+const (
 	// Circ is 360 degrees
 	Circ = float32(360.0)
 

@@ -32,7 +32,7 @@ func main() {
 		case easter.Rainbow:
 			app = rainbow.New()
 		case easter.Pong:
-			app = pong.New()
+			app = pong.New(mgr)
 		}
 
 		// Compute and display next frame for the current app.
