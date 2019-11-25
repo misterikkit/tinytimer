@@ -6,14 +6,6 @@ import (
 	"github.com/misterikkit/tinytimer/input"
 )
 
-var leftRightSpam = []input.Event{
-	input.B_Fall, input.C_Fall,
-	input.B_Fall, input.C_Fall,
-	input.B_Fall, input.C_Fall,
-	input.B_Fall, input.C_Fall,
-	input.B_Fall, input.C_Fall,
-}
-
 const (
 	None uint8 = iota
 	Rainbow
@@ -24,6 +16,10 @@ type Egger struct {
 	current uint8
 	history []input.Event
 	last    time.Time
+	// To prevent activating an easter egg while playing an app (*cough pong
+	// cough*) the egger disables itself after the first match. System restart is
+	// required to switch into a different app.
+	done bool
 }
 
 func New(ui *input.Manager) *Egger {
@@ -43,17 +39,48 @@ func (e *Egger) Get() uint8 {
 	return ret
 }
 func (e *Egger) handle(evt input.Event) {
+	if e.done {
+		return
+	}
 	if time.Since(e.last) > time.Second {
 		e.history = e.history[:0] // this should hopefully reuse memory
 	}
 	e.history = append(e.history, evt)
 	e.last = time.Now()
-	if match(e.history, leftRightSpam) {
+	if matchBCBC(e.history) {
 		e.current = Rainbow
+		e.done = true
 	}
 	if matchKonami(e.history) {
 		e.current = Pong
+		e.done = true
 	}
+}
+
+// The sequence is (B, C) * 5, ignoring any accidental BC events.
+func matchBCBC(h []input.Event) bool {
+	if len(h) < 10 {
+		return false
+	}
+	wantB := false // start from the end looking for C
+	matchLen := 0
+	for i := len(h) - 1; i >= 0; i-- {
+		switch h[i] {
+		case input.B_Fall:
+			if !wantB {
+				return false
+			}
+			matchLen++
+			wantB = false
+		case input.C_Fall:
+			if wantB {
+				return false
+			}
+			matchLen++
+			wantB = true
+		}
+	}
+	return matchLen >= 10
 }
 
 func match(a, b []input.Event) bool {
