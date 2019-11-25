@@ -132,6 +132,19 @@ func (p *App) Update(now time.Time) {
 			p.state = volley
 			p.lastStateChange = now
 		}
+
+	case victory:
+		/////////////////////
+		// Victory animation!
+		progress := float32(now.Sub(p.lastStateChange)) / float32(2*time.Second)
+		if progress > 1.0 {
+			progress = 1.0
+		}
+		winner := &p.p1
+		if p.p2.score >= maxPoints {
+			winner = &p.p2
+		}
+		winner.paddle.Size = progress * 22 * graphics.PixelWidth
 	}
 
 	p.lastUpdate = now
@@ -141,9 +154,16 @@ func (p *App) Update(now time.Time) {
 	graphics.Fill(p.frame, graphics.Black)
 	p.scoreBG.Render(p.frame)
 	p.p1.paddle.Render(p.frame)
-	p.p1.scoreBar.Render(p.frame)
 	p.p2.paddle.Render(p.frame)
-	p.p2.scoreBar.Render(p.frame)
+
+	// Render higher scoring player last so victory animation looks right.
+	pa, pb := &p.p1, &p.p2
+	if p.p1.score < p.p2.score {
+		pa, pb = pb, pa
+	}
+	pa.scoreBar.Render(p.frame)
+	pb.scoreBar.Render(p.frame)
+
 	p.ball.Render(p.frame)
 }
 
@@ -158,6 +178,7 @@ func (p *App) score(player *player) {
 	p.ball.Color = graphics.Red
 	if player.score >= maxPoints {
 		p.state = victory
+		p.ball.Size = 0
 	} else {
 		p.state = score
 	}
@@ -167,11 +188,17 @@ func (p *App) score(player *player) {
 func (p *App) reset(input.Event) {
 	p.state = volley
 	p.lastStateChange = time.Now() // plumb this in?
+
 	p.p1.score = 0
+	p.p1.paddle.Size = 2 * graphics.PixelWidth
+	p.p1.scoreBar.Size = 0
 	p.p2.score = 0
-	p.ball.Position = fieldMid
+	p.p2.paddle.Size = 2 * graphics.PixelWidth
+	p.p2.scoreBar.Size = 0
 	p.ball.speed = minSpeed
-	// TODO: reset score bars
+	p.ball.Position = fieldMid
+	p.ball.Color = graphics.White
+	p.ball.Size = graphics.PixelWidth
 }
 
 func (p *App) handle(e input.Event) {
