@@ -203,6 +203,7 @@ func (p *App) handle(e input.Event) {
 	}
 	zone := struct{ l, r float32 }{}
 	var lastInput time.Time
+	// Determine where the "kick" is based on button pressed.
 	switch e {
 	case input.B_Rise:
 		// player 1
@@ -230,8 +231,22 @@ func (p *App) handle(e input.Event) {
 	if time.Since(lastInput) < 100*time.Millisecond {
 		return
 	}
-	if p.ball.Position >= zone.l && p.ball.Position <= zone.r {
-		p.ball.speed = -p.ball.speed
+	if !(p.ball.Position >= zone.l && p.ball.Position <= zone.r) {
+		return
 	}
-	// TODO: variable speed
+
+	///////////////////
+	// Return the ball!
+
+	// Compute speed based on how much the player waited to the last moment.
+	dist := p.ball.Position - zone.l
+	if p.ball.speed < 0 {
+		dist = goalSize - dist
+	}
+	speed := (dist/goalSize)*(maxSpeed-minSpeed) + minSpeed
+	if p.ball.speed < 0 {
+		p.ball.speed = speed
+	} else {
+		p.ball.speed = -speed
+	}
 }
