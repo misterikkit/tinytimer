@@ -21,8 +21,8 @@ const (
 const maxPoints = 5 // and then you win
 
 var (
-	purple = color.RGBA{183, 95, 179, 0}
-	green  = color.RGBA{105, 167, 91, 0}
+	purple = graphics.Scale(color.RGBA{183, 95, 179, 0}, 0.5)
+	green  = graphics.Scale(color.RGBA{105, 197, 91, 0}, 0.5)
 )
 
 type player struct {
