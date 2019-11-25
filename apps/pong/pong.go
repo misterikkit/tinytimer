@@ -153,16 +153,12 @@ func (p *App) Update(now time.Time) {
 	// Render game
 	graphics.Fill(p.frame, graphics.Black)
 	p.scoreBG.Render(p.frame)
+
+	// Render paddles after score bars so victory animation looks right
+	p.p1.scoreBar.Render(p.frame)
+	p.p2.scoreBar.Render(p.frame)
 	p.p1.paddle.Render(p.frame)
 	p.p2.paddle.Render(p.frame)
-
-	// Render higher scoring player last so victory animation looks right.
-	pa, pb := &p.p1, &p.p2
-	if p.p1.score < p.p2.score {
-		pa, pb = pb, pa
-	}
-	pa.scoreBar.Render(p.frame)
-	pb.scoreBar.Render(p.frame)
 
 	p.ball.Render(p.frame)
 }
