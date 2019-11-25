@@ -202,6 +202,9 @@ func (p *App) reset(input.Event) {
 }
 
 func (p *App) handle(e input.Event) {
+	if p.state != volley {
+		return
+	}
 	zone := struct{ l, r float32 }{}
 	var lastInput time.Time
 	switch e {
