@@ -4,7 +4,6 @@ import (
 	"image/color"
 	"time"
 
-	colorful "github.com/lucasb-eyer/go-colorful"
 	"github.com/misterikkit/tinytimer/graphics"
 	"github.com/misterikkit/tinytimer/input"
 )
@@ -19,8 +18,9 @@ const (
 const maxPoints = 7 // and then you win
 
 var (
-	purple = func() color.RGBA { r, g, b := colorful.Hcl(320, 73.5, 50).RGB255(); return color.RGBA{r, g, b, 0} }()
-	green  = func() color.RGBA { r, g, b := colorful.Hcl(124, 71.5, 78).RGB255(); return color.RGBA{r, g, b, 0} }()
+	// TODO: increase chroma, decrease luminescence.
+	purple = color.RGBA{172, 78, 200, 0}
+	green  = color.RGBA{151, 211, 75, 0}
 )
 
 type player struct {
@@ -63,7 +63,7 @@ func New(ui *input.Manager) *App {
 			scoreBar: graphics.Sprite{Color: green},
 		},
 		ball: ball{
-			speed: 10.0,
+			speed: 150.0,
 			Sprite: graphics.Sprite{
 				Color:    graphics.White,
 				Position: (fieldLeft + fieldRight) / 2,
@@ -71,13 +71,16 @@ func New(ui *input.Manager) *App {
 			},
 		},
 		scoreBG: graphics.Sprite{
-			Color:    graphics.White,
+			Color:    graphics.Scale(graphics.White, 0.25),
 			Position: 180,
 			Size:     10 * graphics.PixelWidth,
 		},
 		frame:      make([]color.RGBA, graphics.FrameSize),
 		lastUpdate: time.Now(),
 	}
+	ui.AddHandler(input.A_Fall, p.reset)
+	ui.AddHandler(input.B_Rise, p.handle)
+	ui.AddHandler(input.C_Rise, p.handle)
 	return p
 }
 
@@ -87,12 +90,24 @@ func (p *App) Update(now time.Time) {
 	// Update game state
 	dt := now.Sub(p.lastUpdate)
 	p.ball.Position += p.ball.speed * float32(dt.Seconds())
-	if p.ball.Position >= fieldRight {
-		p.ball.Position = fieldRight /*and score*/
+	if p.ball.RightEdge() >= p.p2.paddle.LeftEdge() {
+		p.ball.Position = p.p2.paddle.LeftEdge() - p.ball.Size/2
+		p.ball.speed = -p.ball.speed // this is temporary
+		// p1 scores
+		p.p1.score++
+		p.p1.scoreBar.Size = float32(p.p1.score) * graphics.PixelWidth
+		p.p1.scoreBar.Position = 180 + p.p1.scoreBar.Size/2
+		// TODO: check for win
 	}
-	if p.ball.Position <= fieldLeft {
-		p.ball.Position = fieldLeft /*and score*/
+	if p.ball.LeftEdge() <= p.p1.paddle.RightEdge() {
+		p.ball.Position = p.p1.paddle.RightEdge() + p.ball.Size/2
+		p.ball.speed = -p.ball.speed // this is temporary
+		// p2 scores
+		p.p2.score++
+		p.p2.scoreBar.Size = float32(p.p2.score) * graphics.PixelWidth
+		p.p2.scoreBar.Position = 180 - p.p2.scoreBar.Size/2
 	}
+
 	p.lastUpdate = now
 
 	//////////////
@@ -108,3 +123,24 @@ func (p *App) Update(now time.Time) {
 
 // Frame returns the current frame of the game.
 func (p *App) Frame() []color.RGBA { return p.frame }
+
+func (p *App) reset(input.Event) {
+	p.p1.score = 0
+	p.p2.score = 0
+	p.ball.Position = (fieldLeft + fieldRight) / 2
+	p.ball.speed = 10.0
+}
+
+func (p *App) handle(e input.Event) {
+	zone := struct{ l, r float32 }{}
+	switch e {
+	case input.B_Rise:
+		// player 1
+		zone.l = fieldLeft
+		zone.r = fieldLeft + goalSize
+	case input.C_Rise:
+		// player 2
+		zone.r = fieldRight
+		zone.l = fieldRight - goalSize
+	}
+}
