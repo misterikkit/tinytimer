@@ -61,18 +61,20 @@ type App struct {
 }
 
 func New(ui *input.Manager) *App {
+	// It seems like importing rand breaks the app. ):
 	// rand.Seed(time.Now().UnixNano())
+	initRandom()
 	s := &App{
 		frame: make([]color.RGBA, 24),
-		// 	sprites: []graphics.Sprite{
-		// 		{Size: 3 * graphics.PixelWidth, Position: graphics.Circ * 0 / 3, Color: graphics.Red},
-		// 		{Size: 3 * graphics.PixelWidth, Position: graphics.Circ * 2 / 3, Color: graphics.Green},
-		// 		{Size: 3 * graphics.PixelWidth, Position: graphics.Circ * 1 / 3, Color: graphics.Blue},
-		// 	},
-		// 	echo: make([]bool, 3),
+		// sprites: []graphics.Sprite{
+		// 	{Size: 3 * graphics.PixelWidth, Position: graphics.Circ * 0 / 3, Color: graphics.Red},
+		// 	{Size: 3 * graphics.PixelWidth, Position: graphics.Circ * 2 / 3, Color: graphics.Green},
+		// 	{Size: 3 * graphics.PixelWidth, Position: graphics.Circ * 1 / 3, Color: graphics.Blue},
+		// },
+		// echo: make([]bool, 3),
 
-		// 	state:           intro,
-		// 	lastStateChange: time.Now(),
+		// state:           intro,
+		// lastStateChange: time.Now(),
 	}
 	// ui.AddHandler(input.A_Fall, s.handleInput)
 	// ui.AddHandler(input.B_Fall, s.handleInput)
@@ -96,49 +98,49 @@ func (s *App) Reset() {
 func (s *App) Frame() []color.RGBA { return s.frame }
 
 func (s *App) Update(now time.Time) {
-	graphics.Fill(s.frame, graphics.Black)
-	// var bg []graphics.Sprite
-	// switch s.state {
-	// case correct:
-	// 	bg = bgGreen
-	// case incorrect:
-	// 	bg = bgRed
-	// default:
-	// 	bg = bgWhite
-	// }
-	// for i := range bg {
-	// 	bg[i].Render(s.frame)
-	// }
-
-	// switch s.state {
-	// case intro:
-	// 	for i := range s.sprites {
-	// 		s.sprites[i].Render(s.frame)
+	// 	graphics.Fill(s.frame, graphics.Black)
+	// 	var bg []graphics.Sprite
+	// 	switch s.state {
+	// 	case correct:
+	// 		bg = bgGreen
+	// 	case incorrect:
+	// 		bg = bgRed
+	// 	default:
+	// 		bg = bgWhite
 	// 	}
-	// 	if now.Sub(s.lastStateChange) > time.Second {
-	// 		s.state = correct
-	// 		s.lastStateChange = now
-	// 	}
-	// case displaying:
-	// 	s.doDisplay(now)
-	// case userInput:
-	// 	s.doEcho()
-	// case correct:
-	// 	if now.Sub(s.lastStateChange) > time.Second {
-	// 		s.collectedInput = nil
-	// 		s.sequence = append(s.sequence, token(rand.Int()%3))
-	// 		s.state = displaying
-	// 		s.lastStateChange = now
+	// 	for i := range bg {
+	// 		bg[i].Render(s.frame)
 	// 	}
 
-	// case incorrect:
-	// 	if now.Sub(s.lastStateChange) > time.Second {
-	// 		s.collectedInput = nil
-	// 		s.sequence = nil
-	// 		s.state = intro
-	// 		s.lastStateChange = now
+	// 	switch s.state {
+	// 	case intro:
+	// 		for i := range s.sprites {
+	// 			s.sprites[i].Render(s.frame)
+	// 		}
+	// 		if now.Sub(s.lastStateChange) > time.Second {
+	// 			s.state = correct
+	// 			s.lastStateChange = now
+	// 		}
+	// 	case displaying:
+	// 		s.doDisplay(now)
+	// 	case userInput:
+	// 		s.doEcho()
+	// 	case correct:
+	// 		if now.Sub(s.lastStateChange) > time.Second {
+	// 			s.collectedInput = nil
+	// 			s.sequence = append(s.sequence, token(rand()%3))
+	// 			s.state = displaying
+	// 			s.lastStateChange = now
+	// 		}
+
+	// 	case incorrect:
+	// 		if now.Sub(s.lastStateChange) > time.Second {
+	// 			s.collectedInput = nil
+	// 			s.sequence = nil
+	// 			s.state = intro
+	// 			s.lastStateChange = now
+	// 		}
 	// 	}
-	// }
 }
 
 func (s *App) doDisplay(now time.Time) {
