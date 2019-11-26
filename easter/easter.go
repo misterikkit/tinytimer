@@ -95,32 +95,32 @@ func matchCycle(h []input.Event) bool {
 		return false
 	}
 	matchLen := 0
-	// want := 'c'
-	// for i := len(h) - 1; i >= 0; i-- {
-	// 	if matchLen >= 6 {
-	// 		break
-	// 	}
-	// 	switch h[i] {
-	// 	case input.A_Fall:
-	// 		if want != 'a' {
-	// 			return false
-	// 		}
-	// 		matchLen++
-	// 		want = 'c'
-	// 	case input.B_Fall:
-	// 		if want != 'b' {
-	// 			return false
-	// 		}
-	// 		matchLen++
-	// 		want = 'a'
-	// 	case input.C_Fall:
-	// 		if want != 'c' {
-	// 			return false
-	// 		}
-	// 		matchLen++
-	// 		want = 'b'
-	// 	}
-	// }
+	want := 'c'
+	for i := len(h) - 1; i >= 0; i-- {
+		if matchLen >= 6 {
+			break
+		}
+		switch h[i] {
+		case input.A_Fall:
+			if want != 'a' {
+				return false
+			}
+			matchLen++
+			want = 'c'
+		case input.B_Fall:
+			if want != 'b' {
+				return false
+			}
+			matchLen++
+			want = 'a'
+		case input.C_Fall:
+			if want != 'c' {
+				return false
+			}
+			matchLen++
+			want = 'b'
+		}
+	}
 	return matchLen >= 6
 }
 
