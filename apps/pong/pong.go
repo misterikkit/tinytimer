@@ -91,7 +91,7 @@ func New(ui *input.Manager) *App {
 		frame:      make([]color.RGBA, graphics.FrameSize),
 		lastUpdate: time.Now(),
 	}
-	ui.AddHandler(input.A_Fall, p.reset)
+	ui.AddHandler(input.A_Fall, func(input.Event) { p.Reset() })
 	ui.AddHandler(input.B_Rise, p.handle)
 	ui.AddHandler(input.C_Rise, p.handle)
 	return p
@@ -181,9 +181,10 @@ func (p *App) score(player *player) {
 	p.lastStateChange = time.Now() // plumb this in?
 }
 
-func (p *App) reset(input.Event) {
+func (p *App) Reset() {
 	p.state = volley
 	p.lastStateChange = time.Now() // plumb this in?
+	p.lastUpdate = time.Now()      // plumb this in?
 
 	p.p1.score = 0
 	p.p1.paddle.Size = 2 * graphics.PixelWidth

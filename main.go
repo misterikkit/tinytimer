@@ -37,6 +37,7 @@ func main() {
 			if isTimer(app) {
 				ui.Sleepish()
 			}
+			timer.Reset()
 			app = timer
 		case easter.Rainbow:
 			if isTimer(app) {
@@ -44,6 +45,7 @@ func main() {
 			}
 		case easter.Pong:
 			if isTimer(app) {
+				pong.Reset()
 				app = pong
 			}
 		}

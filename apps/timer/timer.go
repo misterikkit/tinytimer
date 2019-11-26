@@ -52,28 +52,34 @@ func New(ui *input.Manager) *App {
 func (t *App) Update(now time.Time) {
 	done := t.Animation.Update(now)
 	if done {
-		t.Event(animationDone)
+		t.handleEvent(animationDone)
 	}
 }
 
 // Frame returns the current animation's frame.
 func (t *App) Frame() []color.RGBA { return t.Animation.Frame() }
 
+func (t *App) Reset() {
+	t.toIdle(0)
+	// TODO: This needs to also ignore the input falling edges associated with the
+	// ABC_Fall that triggered reset.
+}
+
 // handleInput converts input events to game events.
 func (t *App) handleInput(e input.Event) {
 	switch e {
 	case input.A_Fall:
-		t.Event(cancel)
+		t.handleEvent(cancel)
 	case input.B_Fall:
-		t.Event(timer10M)
+		t.handleEvent(timer10M)
 	case input.C_Fall:
-		t.Event(timer2M)
+		t.handleEvent(timer2M)
 	}
 }
 
-// Event signals the game that an event has occurred. These are inputs into the
+// handleEvent signals the game that an event has occurred. These are inputs into the
 // state machine.
-func (t *App) Event(e event) {
+func (t *App) handleEvent(e event) {
 	switch e {
 	case animationDone:
 		t.animationDone()
