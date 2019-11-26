@@ -54,6 +54,7 @@ type App struct {
 	frame           []color.RGBA
 	lastUpdate      time.Time
 	lastPlayerInput [2]time.Time
+	victoryDots     [2]graphics.Sprite
 }
 
 // New returns a fresh game of pong
@@ -136,6 +137,8 @@ func (p *App) Update(now time.Time) {
 	case victory:
 		/////////////////////
 		// Victory animation!
+
+		// 1) Paddle grows
 		progress := float32(now.Sub(p.lastStateChange)) / float32(2*time.Second)
 		if progress > 1.0 {
 			progress = 1.0
@@ -145,6 +148,13 @@ func (p *App) Update(now time.Time) {
 			winner = &p.p2
 		}
 		winner.paddle.Size = progress * 22 * graphics.PixelWidth
+
+		// 2) Victory dots (so there is always motion)
+		const period = time.Second / 2
+		vTime := now.Sub(p.lastStateChange)
+		progress = float32(vTime-vTime.Truncate(period)) / float32(period)
+		p.victoryDots[0].Position = winner.paddle.Position + 180*progress
+		p.victoryDots[1].Position = winner.paddle.Position - 180*progress
 	}
 
 	p.lastUpdate = now
@@ -161,6 +171,9 @@ func (p *App) Update(now time.Time) {
 	p.p2.paddle.Render(p.frame)
 
 	p.ball.Render(p.frame)
+
+	p.victoryDots[0].Render(p.frame)
+	p.victoryDots[1].Render(p.frame)
 }
 
 func (p *App) score(player *player) {
@@ -175,6 +188,15 @@ func (p *App) score(player *player) {
 	if player.score >= maxPoints {
 		p.state = victory
 		p.ball.Size = 0
+		p.victoryDots[0].Size = 2 * graphics.PixelWidth
+		p.victoryDots[1].Size = 2 * graphics.PixelWidth
+		if player == &p.p1 {
+			p.victoryDots[0].Color = graphics.Scale(purple, 0.5)
+			p.victoryDots[1].Color = graphics.Scale(purple, 0.5)
+		} else {
+			p.victoryDots[0].Color = graphics.Scale(green, 0.5)
+			p.victoryDots[1].Color = graphics.Scale(green, 0.5)
+		}
 	} else {
 		p.state = score
 	}
@@ -197,6 +219,8 @@ func (p *App) Reset() {
 	p.ball.Position = fieldMid - 1.5*graphics.PixelWidth
 	p.ball.Color = graphics.White
 	p.ball.Size = graphics.PixelWidth
+	p.victoryDots[0].Size = 0
+	p.victoryDots[1].Size = 0
 }
 
 func (p *App) handle(e input.Event) {
