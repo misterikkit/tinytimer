@@ -1,9 +1,12 @@
 package input
 
+type multi struct{ ab, ac, bc, abc bool }
+
 type Manager struct {
 	handlers            map[Event][]Handler
 	btnA, btnB, btnC    func() bool
 	lastA, lastB, lastC bool
+	lastMulti           multi
 	done                chan struct{}
 }
 
@@ -62,43 +65,49 @@ func (m *Manager) Poll() {
 		m.invoke(C_Fall)
 	}
 
-	type multi struct{ ab, ac, bc, abc bool }
 	curr := multi{
 		ab:  a && b,
 		ac:  a && c,
 		bc:  b && c,
 		abc: a && b && c,
 	}
-	last := multi{
-		ab:  m.lastA && m.lastB,
-		ac:  m.lastA && m.lastC,
-		bc:  m.lastB && m.lastC,
-		abc: m.lastA && m.lastB && m.lastC,
-	}
 
-	if curr.ab && !last.ab {
+	// Only set lastMulti values when the edge is detected, rather than just
+	// assigning curr to them. This is because the rising edge condition is not the
+	// inverse of the falling edge condition.
+	if curr.ab && !m.lastMulti.ab {
 		m.invoke(AB_Rise)
+		m.lastMulti.ab = true
 	}
-	if !curr.ab && last.ab {
-		m.invoke(AB_Fall)
-	}
-	if curr.ac && !last.ac {
+	if curr.ac && !m.lastMulti.ac {
 		m.invoke(AC_Rise)
+		m.lastMulti.ac = true
 	}
-	if !curr.ac && last.ac {
-		m.invoke(AC_Fall)
-	}
-	if curr.bc && !last.bc {
+	if curr.bc && !m.lastMulti.bc {
 		m.invoke(BC_Rise)
+		m.lastMulti.bc = true
 	}
-	if !curr.bc && last.bc {
-		m.invoke(BC_Fall)
-	}
-	if curr.abc && !last.abc {
+	if curr.abc && !m.lastMulti.abc {
 		m.invoke(ABC_Rise)
+		m.lastMulti.abc = true
 	}
-	if !curr.abc && last.abc {
+	// Falling multi-edges are a special case. They don't trigger when the combo
+	// ceases to be high, but when all of the combo's buttons are low.
+	if m.lastMulti.ab && !a && !b {
+		m.invoke(AB_Fall)
+		m.lastMulti.ab = false
+	}
+	if m.lastMulti.ac && !a && !c {
+		m.invoke(AC_Fall)
+		m.lastMulti.ac = false
+	}
+	if m.lastMulti.bc && !b && !c {
+		m.invoke(BC_Fall)
+		m.lastMulti.bc = false
+	}
+	if m.lastMulti.abc && !a && !b && !c {
 		m.invoke(ABC_Fall)
+		m.lastMulti.abc = false
 	}
 
 	// TODO: see if a defer will work here
