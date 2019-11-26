@@ -19,20 +19,33 @@ type App interface {
 }
 
 func main() {
+	println("hello world")
 	ui := setup() // initialize hardware
 	mgr := input.NewManager(ui.btnCancel.Get, ui.btn10Min.Get, ui.btn2Min.Get)
-	// Entering sleep mode is always available regardless of current app, so handle it here.
-	mgr.AddHandler(input.ABC_Fall, func(input.Event) { ui.Sleepish() })
-	// Set up initial app and easter egg launcher.
-	app := App(timer.New(mgr))
 	eggs := easter.New(mgr)
+
+	var (
+		timer   = timer.New(mgr)
+		rainbow = rainbow.New()
+		pong    = pong.New(mgr)
+	)
+	app := App(timer)
 	for {
 		mgr.Poll() // Invokes appropriate handlers.
 		switch eggs.Get() {
+		case easter.Eggsit:
+			if isTimer(app) {
+				ui.Sleepish()
+			}
+			app = timer
 		case easter.Rainbow:
-			app = rainbow.New()
+			if isTimer(app) {
+				app = rainbow
+			}
 		case easter.Pong:
-			app = pong.New(mgr)
+			if isTimer(app) {
+				app = pong
+			}
 		}
 
 		// Compute and display next frame for the current app.
@@ -43,4 +56,9 @@ func main() {
 		// but nobody will notice.
 		time.Sleep(time.Second / frameRate)
 	}
+}
+
+func isTimer(a App) bool {
+	_, ok := a.(*timer.App)
+	return ok
 }
