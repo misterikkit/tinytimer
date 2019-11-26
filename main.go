@@ -7,6 +7,7 @@ import (
 	"github.com/misterikkit/tinytimer/apps/colorpicker"
 	"github.com/misterikkit/tinytimer/apps/pong"
 	"github.com/misterikkit/tinytimer/apps/rainbow"
+	"github.com/misterikkit/tinytimer/apps/simon"
 	"github.com/misterikkit/tinytimer/apps/timer"
 	"github.com/misterikkit/tinytimer/easter"
 	"github.com/misterikkit/tinytimer/input"

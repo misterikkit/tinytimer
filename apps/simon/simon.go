@@ -75,16 +75,23 @@ func New(ui *input.Manager) *App {
 		state:           intro,
 		lastStateChange: time.Now(),
 	}
-	ui.AddHandler(input.A_Fall, s.handleInput)
-	ui.AddHandler(input.B_Fall, s.handleInput)
-	ui.AddHandler(input.C_Fall, s.handleInput)
-	ui.AddHandler(input.A_Fall, s.handleEcho)
-	ui.AddHandler(input.B_Fall, s.handleEcho)
-	ui.AddHandler(input.C_Fall, s.handleEcho)
-	ui.AddHandler(input.A_Rise, s.handleEcho)
-	ui.AddHandler(input.B_Rise, s.handleEcho)
-	ui.AddHandler(input.C_Rise, s.handleEcho)
+	// ui.AddHandler(input.A_Fall, s.handleInput)
+	// ui.AddHandler(input.B_Fall, s.handleInput)
+	// ui.AddHandler(input.C_Fall, s.handleInput)
+	// ui.AddHandler(input.A_Fall, s.handleEcho)
+	// ui.AddHandler(input.B_Fall, s.handleEcho)
+	// ui.AddHandler(input.C_Fall, s.handleEcho)
+	// ui.AddHandler(input.A_Rise, s.handleEcho)
+	// ui.AddHandler(input.B_Rise, s.handleEcho)
+	// ui.AddHandler(input.C_Rise, s.handleEcho)
 	return s
+}
+
+func (s *App) Reset() {
+	s.sequence = nil
+	s.collectedInput = nil
+	s.state = intro
+	s.lastStateChange = time.Now()
 }
 
 func (s *App) Frame() []color.RGBA { return s.frame }

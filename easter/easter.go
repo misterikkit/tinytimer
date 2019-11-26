@@ -47,10 +47,10 @@ func (e *Egger) handle(evt input.Event) {
 	switch {
 	case evt == input.ABC_Fall:
 		e.current = Eggsit
-
 	case matchBCBC(e.history):
 		e.current = Rainbow
-
+	case matchCycle(e.history):
+		e.current = Simon
 	case matchKonami(e.history):
 		e.current = Pong
 
@@ -88,6 +88,40 @@ func matchBCBC(h []input.Event) bool {
 		}
 	}
 	return matchLen >= 10
+}
+
+func matchCycle(h []input.Event) bool {
+	if len(h) < 6 {
+		return false
+	}
+	matchLen := 0
+	// want := 'c'
+	// for i := len(h) - 1; i >= 0; i-- {
+	// 	if matchLen >= 6 {
+	// 		break
+	// 	}
+	// 	switch h[i] {
+	// 	case input.A_Fall:
+	// 		if want != 'a' {
+	// 			return false
+	// 		}
+	// 		matchLen++
+	// 		want = 'c'
+	// 	case input.B_Fall:
+	// 		if want != 'b' {
+	// 			return false
+	// 		}
+	// 		matchLen++
+	// 		want = 'a'
+	// 	case input.C_Fall:
+	// 		if want != 'c' {
+	// 			return false
+	// 		}
+	// 		matchLen++
+	// 		want = 'b'
+	// 	}
+	// }
+	return matchLen >= 6
 }
 
 func match(a, b []input.Event) bool {
