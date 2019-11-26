@@ -58,6 +58,7 @@ type App struct {
 
 // New returns a fresh game of pong
 func New(ui *input.Manager) *App {
+	// It is safe to assume that Reset() will be called before this gets used.
 	p := &App{
 		p1: player{
 			paddle: graphics.Sprite{
@@ -88,8 +89,7 @@ func New(ui *input.Manager) *App {
 			Position: 180,
 			Size:     10 * graphics.PixelWidth,
 		},
-		frame:      make([]color.RGBA, graphics.FrameSize),
-		lastUpdate: time.Now(),
+		frame: make([]color.RGBA, graphics.FrameSize),
 	}
 	ui.AddHandler(input.A_Fall, func(input.Event) { p.Reset() })
 	ui.AddHandler(input.B_Rise, p.handle)
@@ -181,8 +181,9 @@ func (p *App) score(player *player) {
 	p.lastStateChange = time.Now() // plumb this in?
 }
 
+// Reset returns the app to its initial state.
 func (p *App) Reset() {
-	p.state = volley
+	p.state = score
 	p.lastStateChange = time.Now() // plumb this in?
 	p.lastUpdate = time.Now()      // plumb this in?
 
@@ -193,7 +194,7 @@ func (p *App) Reset() {
 	p.p2.paddle.Size = 2 * graphics.PixelWidth
 	p.p2.scoreBar.Size = 0
 	p.ball.speed = minSpeed
-	p.ball.Position = fieldMid
+	p.ball.Position = fieldMid - 1.5*graphics.PixelWidth
 	p.ball.Color = graphics.White
 	p.ball.Size = graphics.PixelWidth
 }
