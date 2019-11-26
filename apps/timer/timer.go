@@ -60,9 +60,7 @@ func (t *App) Update(now time.Time) {
 func (t *App) Frame() []color.RGBA { return t.Animation.Frame() }
 
 func (t *App) Reset() {
-	t.toIdle(0)
-	// TODO: This needs to also ignore the input falling edges associated with the
-	// ABC_Fall that triggered reset.
+	t.toIdle(-time.Second) // negative value to avoid 1 frame of transition
 }
 
 // handleInput converts input events to game events.
