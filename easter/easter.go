@@ -62,6 +62,9 @@ func matchBCBC(h []input.Event) bool {
 	wantB := false // start from the end looking for C
 	matchLen := 0
 	for i := len(h) - 1; i >= 0; i-- {
+		if matchLen >= 10 {
+			break
+		}
 		switch h[i] {
 		case input.A_Fall:
 			return false
