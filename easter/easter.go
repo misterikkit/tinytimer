@@ -100,9 +100,10 @@ func match(a, b []input.Event) bool {
 // The sequence is A, A, BC, BC, B, C, B, C.
 // But we have to ignore the extra B and C that come with each BC.
 func matchKonami(h []input.Event) bool {
-	if len(h) != 12 {
+	if len(h) < 12 {
 		return false
 	}
+	h = h[len(h)-12:]
 	upup := h[:2]
 	if !match(upup, []input.Event{input.A_Fall, input.A_Fall}) {
 		return false
