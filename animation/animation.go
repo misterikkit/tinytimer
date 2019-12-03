@@ -52,7 +52,9 @@ func (s *spinner) Update(now time.Time) bool {
 	elapsed := float32(now.Sub(now.Truncate(period)).Nanoseconds())
 	progress := elapsed / float32(period.Nanoseconds())
 	for i := range s.dots {
-		s.dots[i].Position = graphics.Circ*progress + divide*float32(i) // TODO: mod
+		// The value of Position has an upper bound of `2*Circ`. The max progress is
+		// 1.0 and divide*spinnerCount==Circ.
+		s.dots[i].Position = graphics.Circ*progress + divide*float32(i)
 		s.dots[i].Render(s.frame)
 	}
 	return false
