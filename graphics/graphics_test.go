@@ -47,13 +47,33 @@ func TestSprite_Render(t *testing.T) {
 		},
 		{
 			"half pixel",
-			[]Sprite{{Color: Red, Size: PixelWidth / 2, Position: PixelWidth / 2}},
+			[]Sprite{{Color: rgb(255, 0, 0), Size: PixelWidth / 2, Position: PixelWidth / 2}},
 			newFrame(rgb(127, 0, 0)),
 		},
 		{
 			"misaligned pixel",
-			[]Sprite{{Color: Red, Size: PixelWidth, Position: 0.5 * PixelWidth}},
-			newFrame(rgb(127, 0, 0), rgb(127, 0, 0)),
+			[]Sprite{{Color: rgb(255, 0, 0), Size: PixelWidth, Position: 1.25 * PixelWidth}},
+			newFrame(rgb(63, 0, 0), rgb(191, 0, 0)),
+		},
+		{
+			"full frame",
+			[]Sprite{{Color: White, Size: Circ}},
+			newFrame(
+				White, White, White, White, White, White,
+				White, White, White, White, White, White,
+				White, White, White, White, White, White,
+				White, White, White, White, White, White,
+			),
+		},
+		{
+			"crossing zero",
+			[]Sprite{{Color: rgb(255, 255, 255), Size: 7 * PixelWidth, Position: 2 * PixelWidth}},
+			newFrame(
+				rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(127, 127, 127),
+				Black, Black, Black, Black, Black, Black,
+				Black, Black, Black, Black, Black, Black,
+				Black, Black, Black, Black, rgb(127, 127, 127), rgb(255, 255, 255),
+			),
 		},
 	}
 
@@ -61,7 +81,7 @@ func TestSprite_Render(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			f := newFrame()
 			for _, s := range test.sprites {
-				s.Render(f)
+				s.Render(f, true)
 			}
 			assert.Equal(t, test.expected, f)
 		})
@@ -91,5 +111,44 @@ func TestOverlap(t *testing.T) {
 			t.Errorf("overlap(%v, %v, %v, %v) = %v, expected %v",
 				test.b1, test.b2, test.a1, test.a2, actual, test.expected)
 		}
+	}
+}
+
+func TestScale(t *testing.T) {
+	tests := []struct {
+		name     string
+		in       color.RGBA
+		scale    float32
+		expected color.RGBA
+	}{
+		{
+			"small double",
+			rgb(1, 2, 3),
+			2.0,
+			rgb(2, 4, 6),
+		},
+		{
+			"small half",
+			rgb(5, 6, 7),
+			0.5,
+			rgb(2, 3, 3),
+		},
+		{
+			"half red",
+			rgb(255, 0, 0),
+			0.5,
+			rgb(127, 0, 0),
+		},
+		{
+			"black stays black",
+			Black,
+			0.5,
+			Black,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			assert.Equal(t, test.expected, Scale(test.in, test.scale))
+		})
 	}
 }

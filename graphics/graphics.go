@@ -41,7 +41,7 @@ type Sprite struct {
 
 // Render sets the sprite's pixels in the frame, rolling around the end of the
 // buffer, and blending with existing color values.
-func (s Sprite) Render(frame []color.RGBA) {
+func (s Sprite) Render(frame []color.RGBA, dbg ...bool) {
 	half := s.Size / 2
 	// Add Circ to position because math gets weird near zero.
 	start := Circ + (s.Position) - (half) // degrees
@@ -97,6 +97,7 @@ func Scale(c color.RGBA, s float32) color.RGBA {
 	}
 }
 
+// Add does a simple addition of the given color values.
 func Add(c1, c2 color.RGBA) color.RGBA {
 	return color.RGBA{c1.R + c2.R, c1.G + c2.G, c1.B + c2.B, 0}
 }
