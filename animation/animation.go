@@ -103,7 +103,7 @@ func (l *loader) Update(now time.Time) bool {
 
 	l.bar.Render(l.frame)
 	l.dot.Render(l.frame)
-	return false
+	return l.done
 }
 
 type flasher struct {
@@ -125,7 +125,7 @@ func (f *flasher) Update(now time.Time) bool {
 	s = s * s // stay smooth. stay positive
 	val := graphics.Scale(f.c, s)
 	graphics.Fill(f.frame, val)
-	return now.After(f.end)
+	return !now.Before(f.end) // This is double negated to return true on the exact frame.
 }
 
 type fader struct {
