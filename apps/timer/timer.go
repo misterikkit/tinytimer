@@ -6,6 +6,7 @@ import (
 
 	"github.com/misterikkit/tinytimer/animation"
 	"github.com/misterikkit/tinytimer/graphics"
+	"github.com/misterikkit/tinytimer/hack"
 	"github.com/misterikkit/tinytimer/input"
 )
 
@@ -39,7 +40,7 @@ type App struct {
 func New(ui *input.Manager) *App {
 	t := &App{
 		state:     boot,
-		Animation: animation.NewLoader(graphics.White, graphics.Black, time.Now(), time.Now().Add(time.Second/2)),
+		Animation: animation.NewLoader(graphics.White, graphics.Black, time.Now(), time.Now().Add(hack.ScaleDuration(time.Second/2))),
 	}
 	ui.AddHandler(input.A_Fall, t.handleInput)
 	ui.AddHandler(input.B_Fall, t.handleInput)
@@ -81,10 +82,10 @@ func (t *App) handleEvent(e event) {
 	case animationDone:
 		t.animationDone()
 	case timer2M:
-		t.startTimer(2 * time.Minute)
+		t.startTimer(hack.ScaleDuration(2 * time.Minute))
 	case timer10M:
-		// t.startTimer(10 * time.Second)
-		t.startTimer(10 * time.Minute)
+		// t.startTimer(hack.ScaleDuration(10 * time.Second))
+		t.startTimer(hack.ScaleDuration(10 * time.Minute))
 	case cancel:
 		t.cancelTimer()
 	}
@@ -93,12 +94,12 @@ func (t *App) handleEvent(e event) {
 func (t *App) animationDone() {
 	switch t.state {
 	case boot:
-		t.toIdle(2 * time.Second)
+		t.toIdle(hack.ScaleDuration(2 * time.Second))
 	case countdown:
 		t.state = timerPop
-		t.Animation = animation.NewFlasher(graphics.Red, time.Now().Add(2*time.Second))
+		t.Animation = animation.NewFlasher(graphics.Red, time.Now().Add(hack.ScaleDuration(2*time.Second)))
 	case timerPop:
-		t.toIdle(1 * time.Second)
+		t.toIdle(hack.ScaleDuration(1 * time.Second))
 	}
 }
 
@@ -111,6 +112,7 @@ func (t *App) startTimer(d time.Duration) {
 		fallthrough
 	case idle:
 		t.state = countdown
+		// Don't scale this duration because it has been scaled in the caller.
 		t.Animation = animation.NewLoader(graphics.Black, graphics.CSIOrange, time.Now(), time.Now().Add(d))
 	}
 }
@@ -118,7 +120,7 @@ func (t *App) startTimer(d time.Duration) {
 func (t *App) cancelTimer() {
 	switch t.state {
 	case countdown:
-		t.toIdle(1 * time.Second)
+		t.toIdle((1 * time.Second))
 	}
 }
 
@@ -126,5 +128,6 @@ func (t *App) cancelTimer() {
 func (t *App) toIdle(d time.Duration) {
 	t.state = idle
 	spin := animation.NewSpinner(graphics.K8SBlue)
+	// Don't scale this duration because it has been scaled in the caller.
 	t.Animation = animation.NewFader(t.Animation, spin, time.Now(), time.Now().Add(d))
 }

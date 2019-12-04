@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/misterikkit/tinytimer/graphics"
+	"github.com/misterikkit/tinytimer/hack"
 )
 
 // Interface provides a frame of pixels that changes over time.
@@ -41,7 +42,7 @@ func NewSpinner(c color.RGBA) Interface {
 
 func (s *spinner) Frame() []color.RGBA { return s.frame }
 
-var period = time.Second * spinnerCount
+var period = hack.ScaleDuration(time.Second * spinnerCount)
 
 // Update computes the current frame of animation.
 func (s *spinner) Update(now time.Time) bool {
@@ -96,6 +97,8 @@ func (l *loader) Update(now time.Time) bool {
 	l.bar.Position = l.bar.Size / 2.0
 
 	elapsed := float32(now.Sub(l.start).Seconds())
+	// This is reverse scaled since it is supposed to match real second ticks.
+	elapsed *= hack.TimeScale
 	l.dot.Position = elapsed * graphics.Circ
 
 	l.bar.Render(l.frame)
