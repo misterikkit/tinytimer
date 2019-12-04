@@ -9,7 +9,7 @@ import (
 	"machine"
 	"time"
 
-	"github.com/misterikkit/tinytimer/ws2812" // TODO: fix upstream
+	"github.com/misterikkit/tinygo-drivers/ws2812" // TODO: fix upstream
 	"tinygo.org/x/drivers/apa102"
 )
 
