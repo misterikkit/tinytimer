@@ -8,7 +8,6 @@ import (
 
 	"github.com/misterikkit/tinytimer/animation"
 	"github.com/misterikkit/tinytimer/graphics"
-	"github.com/misterikkit/tinytimer/hack"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -46,7 +45,7 @@ func TestSpinner(t *testing.T) {
 	s.Update(t0)
 	f0 := newFrame()
 	copy(f0, s.Frame())
-	s.Update(t0.Add(hack.ScaleDuration(time.Second)))
+	s.Update(t0.Add(time.Second))
 	f1 := newFrame()
 	copy(f1, s.Frame())
 	assert.Equal(t, f0, f1, "frame is not identical to 1 second ago")
