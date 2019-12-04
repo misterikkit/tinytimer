@@ -21,7 +21,7 @@ type App interface {
 func main() {
 	println("hello world")
 	ui := setup() // initialize hardware
-	mgr := input.NewManager(ui.btnCancel.Get, ui.btn10Min.Get, ui.btn2Min.Get)
+	mgr := input.NewManager(ui.BtnCancel, ui.Btn10Min, ui.Btn2Min)
 	eggs := easter.New(mgr)
 
 	var (
