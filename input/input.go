@@ -33,6 +33,41 @@ const (
 	ABC_Fall
 )
 
+func (e Event) GoString() string {
+	switch e {
+	case A_Rise:
+		return `A/`
+	case A_Fall:
+		return `A\`
+	case B_Rise:
+		return `B/`
+	case B_Fall:
+		return `B\`
+	case C_Rise:
+		return `C/`
+	case C_Fall:
+		return `C\`
+	case AB_Rise:
+		return `AB/`
+	case AB_Fall:
+		return `AB\`
+	case AC_Rise:
+		return `AC/`
+	case AC_Fall:
+		return `AC\`
+	case BC_Rise:
+		return `BC/`
+	case BC_Fall:
+		return `BC\`
+	case ABC_Rise:
+		return `ABC/`
+	case ABC_Fall:
+		return `ABC\`
+	default:
+		return "Unknown"
+	}
+}
+
 // NewManager initializes a new input manager.
 func NewManager(a, b, c func() bool) *Manager {
 	return &Manager{
