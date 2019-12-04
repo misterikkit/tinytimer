@@ -81,27 +81,22 @@ func turnOffDotStar() {
 
 // hibernate turns off the display and puts the device into the lowest available
 // power mode. There is no waking up from this.
-// TODO: switch from power level OFF to power level BACKUP so that wakeup is
-// possible.
 func hibernate(ui *userInterface) {
 	/////////////
 	// Blank LEDs
 	ui.DisplayLEDs(make([]color.RGBA, frameSize))
-	time.Sleep(time.Second)
+	// LEDs fail to turn off if I don't sleep a moment.
+	time.Sleep(time.Millisecond)
 
 	//////////////////////////
 	// Enter OFF sleep mode
-	// TODO: Use PM_SLEEPCFG_SLEEPMODE_BACKUP, since that allows wakeup from external interrupt.
 	sam.PM.SLEEPCFG.Set(sam.PM_SLEEPCFG_SLEEPMODE_OFF)
-	// Need to wait for SLEEPCFG propagation?
 	for !sam.PM.INTFLAG.HasBits(sam.PM_INTFLAG_SLEEPRDY) {
 	}
 	arm.Asm("wfi")
 
-	/////////////////////////////
-	// After wake-up, reset board
-	// arm.SystemReset()
-
+	////////////////////////////////////////////
+	// The system is now halted until hard reset
 }
 
 // gamma correction for 8-bit color values yoinked from
