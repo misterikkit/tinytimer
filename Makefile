@@ -1,6 +1,6 @@
 flash:
 	sudo mount -t drvfs e: /mnt/e
-	tinygo-9 build -o /mnt/e/flash.uf2 -target=itsybitsy-m4
+	tinygo build -o /mnt/e/flash.uf2 -target=itsybitsy-m4
 
 wasm: wasm_site/main.wasm
 	date > wasm_site/built_at.txt
