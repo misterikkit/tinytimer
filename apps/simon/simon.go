@@ -71,20 +71,20 @@ func New(ui *input.Manager) *App {
 		// 	{Size: 3 * graphics.PixelWidth, Position: graphics.Circ * 2 / 3, Color: graphics.Green},
 		// 	{Size: 3 * graphics.PixelWidth, Position: graphics.Circ * 1 / 3, Color: graphics.Blue},
 		// },
-		// echo: make([]bool, 3),
+		echo: make([]bool, 3),
 
-		// state:           intro,
-		// lastStateChange: time.Now(),
+		state:           intro,
+		lastStateChange: time.Now(),
 	}
 	// ui.AddHandler(input.A_Fall, s.handleInput)
 	// ui.AddHandler(input.B_Fall, s.handleInput)
 	// ui.AddHandler(input.C_Fall, s.handleInput)
-	// ui.AddHandler(input.A_Fall, s.handleEcho)
-	// ui.AddHandler(input.B_Fall, s.handleEcho)
-	// ui.AddHandler(input.C_Fall, s.handleEcho)
-	// ui.AddHandler(input.A_Rise, s.handleEcho)
-	// ui.AddHandler(input.B_Rise, s.handleEcho)
-	// ui.AddHandler(input.C_Rise, s.handleEcho)
+	ui.AddHandler(input.A_Fall, s.handleEcho)
+	ui.AddHandler(input.B_Fall, s.handleEcho)
+	ui.AddHandler(input.C_Fall, s.handleEcho)
+	ui.AddHandler(input.A_Rise, s.handleEcho)
+	ui.AddHandler(input.B_Rise, s.handleEcho)
+	ui.AddHandler(input.C_Rise, s.handleEcho)
 	return s
 }
 
@@ -98,7 +98,7 @@ func (s *App) Reset() {
 func (s *App) Frame() []color.RGBA { return s.frame }
 
 func (s *App) Update(now time.Time) {
-	// 	graphics.Fill(s.frame, graphics.Black)
+	graphics.Fill(s.frame, graphics.Black)
 	// 	var bg []graphics.Sprite
 	// 	switch s.state {
 	// 	case correct:
@@ -124,7 +124,7 @@ func (s *App) Update(now time.Time) {
 	// 	case displaying:
 	// 		s.doDisplay(now)
 	// 	case userInput:
-	// 		s.doEcho()
+	s.doEcho()
 	// 	case correct:
 	// 		if now.Sub(s.lastStateChange) > time.Second {
 	// 			s.collectedInput = nil
