@@ -18,16 +18,13 @@ const (
 
 // Colors
 var (
-	// Scale factor for LED intensity
-	toneItDown = float32(0.5)
-
 	Black = color.RGBA{}
-	White = Scale(color.RGBA{0xFF, 0xFF, 0xFF, 0}, toneItDown)
-	Red   = Scale(color.RGBA{0xFF, 0, 0, 0}, toneItDown)
+	White = Scale(color.RGBA{0xFF, 0xFF, 0xFF, 0}, MaxIntensity)
+	Red   = Scale(color.RGBA{0xFF, 0, 0, 0}, MaxIntensity)
 
 	// K8SBlue is used in the k8s logo
-	K8SBlue   = Scale(color.RGBA{0x32, 0x6C, 0xE5, 0}, toneItDown) // H=221deg S=78.2% V=89.8%
-	CSIOrange = Scale(color.RGBA{0xF5, 0x91, 0x1E, 0}, toneItDown) // H=32deg  S=87.8% V=96.1%
+	K8SBlue   = Scale(color.RGBA{0x32, 0x6C, 0xE5, 0}, MaxIntensity) // H=221deg S=78.2% V=89.8%
+	CSIOrange = Scale(color.RGBA{0xF5, 0x91, 0x1E, 0}, MaxIntensity) // H=32deg  S=87.8% V=96.1%
 )
 
 // Sprite is a one-dimensional object to be rendered onto a Frame.

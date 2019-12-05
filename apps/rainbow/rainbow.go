@@ -4,6 +4,8 @@ import (
 	"image/color"
 	"math"
 	"time"
+
+	"github.com/misterikkit/tinytimer/graphics"
 )
 
 type App struct {
@@ -29,11 +31,11 @@ func (a *App) Update(t time.Time) {
 			Cr: uint8(255 * math.Cos(tau*pos)),
 		}
 		r, g, b, _ := c.RGBA()
-		a.frame[i] = color.RGBA{
-			R: uint8(r >> (8 + 1)),
-			G: uint8(g >> (8 + 1)),
-			B: uint8(b >> (8 + 1)),
-		}
+		a.frame[i] = graphics.Scale(color.RGBA{
+			R: uint8(r >> (8)),
+			G: uint8(g >> (8)),
+			B: uint8(b >> (8)),
+		}, graphics.MaxIntensity)
 	}
 }
 
