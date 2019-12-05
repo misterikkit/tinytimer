@@ -3,7 +3,6 @@
 package main
 
 import (
-	"fmt"
 	"image/color"
 	"syscall/js"
 
@@ -23,10 +22,8 @@ func (ui *userInterface) Btn10Min() bool  { return ui.btn10Min }
 func (ui *userInterface) Sleepish() { /*TODO*/ }
 
 func setup() *userInterface {
-	fmt.Println("hello from setup_wasm.go")
 	ui := new(userInterface)
 	// js.Global().Set("goHandleClick", js.FuncOf(handleClick(g)))
-	awaitWASMLoad()
 	return ui
 }
 
@@ -40,12 +37,6 @@ func handleClick(g *timer.App) func(js.Value, []js.Value) interface{} {
 		}
 		return nil
 	}
-}
-
-func awaitWASMLoad() {
-	loaded := make(chan struct{})
-	js.Global().Set("goLoad", js.FuncOf(func(js.Value, []js.Value) interface{} { close(loaded); return nil }))
-	<-loaded
 }
 
 // DisplayLEDs puts a Frame out into the real world.

@@ -48,22 +48,35 @@
     </ol>
     <script src="/js/jquery-3.4.1.js"></script>
     <script src="/js/wasm_exec.js"></script>
-    <script>
-        const go = new Go();
-        WebAssembly.instantiateStreaming(fetch("/main.wasm", { cache: "no-store" }), go.importObject)
-            .then((result) => {
-                // Start the go app, which registers 'go' prefixed functions
-                go.run(result.instance);
-                // Set up button handlers
-                $(function () {
-                    $("#boot").click(function () { location.reload(); })
-                    $(".goEvent").click(function (e) { goHandleClick(e.target.id); })
-                })
-                // Signal page load to go app
-                $(goLoad)
-            });
-    </script>
     <script src="/js/led.js"></script>
+    <script>
+        const go = new Go(); // Defined in wasm_exec.js
+        const WASM_URL = '/main.wasm';
+
+        var wasm;
+        // Set up button handlers
+        // $(function () {
+        //     $("#boot").click(function () { location.reload(); })
+        //     $(".goEvent").click(function (e) { wasm.exports.handleClick(e.target.id); })
+        // });
+
+        // go.importObject.env['github.com/misterikkit/tinytimer.DisplayLEDs'] = DisplayLEDs;
+        if ('instantiateStreaming' in WebAssembly) {
+            WebAssembly.instantiateStreaming(fetch(WASM_URL), go.importObject).then(function (obj) {
+                wasm = obj.instance;
+                go.run(wasm);
+            })
+        } else {
+            fetch(WASM_URL).then(resp =>
+                resp.arrayBuffer()
+            ).then(bytes =>
+                WebAssembly.instantiate(bytes, go.importObject).then(function (obj) {
+                    wasm = obj.instance;
+                    go.run(wasm);
+                })
+            )
+        }
+    </script>
     <script src="/js/reload.js"></script>
 </body>
 
