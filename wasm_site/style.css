@@ -26,27 +26,28 @@ ol {
     transform-origin: 600% 50%;
 }
 
-#led00{ transform: rotate(0deg); }
-#led01{ transform: rotate(15deg); }
-#led02{ transform: rotate(30deg); }
-#led03{ transform: rotate(45deg); }
-#led04{ transform: rotate(60deg); }
-#led05{ transform: rotate(75deg); }
-#led06{ transform: rotate(90deg); }
-#led07{ transform: rotate(105deg); }
-#led08{ transform: rotate(120deg); }
-#led09{ transform: rotate(135deg); }
-#led10{ transform: rotate(150deg); }
-#led11{ transform: rotate(165deg); }
-#led12{ transform: rotate(180deg); }
-#led13{ transform: rotate(195deg); }
-#led14{ transform: rotate(210deg); }
-#led15{ transform: rotate(225deg); }
-#led16{ transform: rotate(240deg); }
-#led17{ transform: rotate(255deg); }
-#led18{ transform: rotate(270deg); }
-#led19{ transform: rotate(285deg); }
-#led20{ transform: rotate(300deg); }
-#led21{ transform: rotate(315deg); }
-#led22{ transform: rotate(330deg); }
-#led23{ transform: rotate(345deg); }
+/* rotation = led# * 15deg + 7.5deg */
+#led00{ transform: rotate(7.5deg); }
+#led01{ transform: rotate(22.5deg); }
+#led02{ transform: rotate(37.5deg); }
+#led03{ transform: rotate(52.5deg); }
+#led04{ transform: rotate(67.5deg); }
+#led05{ transform: rotate(82.5deg); }
+#led06{ transform: rotate(97.5deg); }
+#led07{ transform: rotate(112.5deg); }
+#led08{ transform: rotate(127.5deg); }
+#led09{ transform: rotate(142.5deg); }
+#led10{ transform: rotate(157.5deg); }
+#led11{ transform: rotate(172.5deg); }
+#led12{ transform: rotate(187.5deg); }
+#led13{ transform: rotate(202.5deg); }
+#led14{ transform: rotate(217.5deg); }
+#led15{ transform: rotate(232.5deg); }
+#led16{ transform: rotate(247.5deg); }
+#led17{ transform: rotate(262.5deg); }
+#led18{ transform: rotate(277.5deg); }
+#led19{ transform: rotate(292.5deg); }
+#led20{ transform: rotate(307.5deg); }
+#led21{ transform: rotate(322.5deg); }
+#led22{ transform: rotate(337.5deg); }
+#led23{ transform: rotate(352.5deg); }
