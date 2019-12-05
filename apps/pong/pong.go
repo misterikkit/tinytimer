@@ -15,8 +15,11 @@ const (
 	fieldMid   = (fieldLeft + fieldRight) / 2
 	goalSize   = 2.0 * graphics.PixelWidth
 	minSpeed   = 130.0 // per second
-	maxSpeed   = 300.0 // per second
+	maxSpeed   = 250.0 // per second
 )
+
+// Minimum time between button presses for each user
+const coolDown = 200 * time.Millisecond
 
 const maxPoints = 5 // and then you win
 
@@ -143,11 +146,12 @@ func (p *App) Update(now time.Time) {
 		if progress > 1.0 {
 			progress = 1.0
 		}
-		winner := &p.p1
+		winner, loser := &p.p1, &p.p2
 		if p.p2.score >= maxPoints {
-			winner = &p.p2
+			winner, loser = &p.p2, &p.p1
 		}
-		winner.paddle.Size = progress * 22 * graphics.PixelWidth
+		winner.paddle.Size = progress * 24 * graphics.PixelWidth
+		loser.paddle.Size = (1 - progress) * 2 * graphics.PixelWidth
 
 		// 2) Victory dots (so there is always motion)
 		const period = time.Second / 2
@@ -164,11 +168,12 @@ func (p *App) Update(now time.Time) {
 	graphics.Fill(p.frame, graphics.Black)
 	p.scoreBG.Render(p.frame)
 
-	// Render paddles after score bars so victory animation looks right
-	p.p1.scoreBar.Render(p.frame)
-	p.p2.scoreBar.Render(p.frame)
+	// Render score bars after paddles so final score is visible during victory
+	// animation.
 	p.p1.paddle.Render(p.frame)
 	p.p2.paddle.Render(p.frame)
+	p.p1.scoreBar.Render(p.frame)
+	p.p2.scoreBar.Render(p.frame)
 
 	p.ball.Render(p.frame)
 
@@ -254,7 +259,7 @@ func (p *App) handle(e input.Event) {
 	}
 
 	// Ignore user input if they've pressed their button too recently (spam).
-	if time.Since(lastInput) < 100*time.Millisecond {
+	if time.Since(lastInput) < coolDown {
 		return
 	}
 	if !(p.ball.Position >= zone.l && p.ball.Position <= zone.r) {
