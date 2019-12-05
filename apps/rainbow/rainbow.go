@@ -2,9 +2,8 @@ package rainbow
 
 import (
 	"image/color"
+	"math"
 	"time"
-
-	"github.com/lucasb-eyer/go-colorful"
 )
 
 type App struct {
@@ -17,14 +16,24 @@ func New() *App {
 }
 
 func (a *App) Update(t time.Time) {
+	const tau = 2 * math.Pi
 	const period = 7 * time.Second
-	offset := 360.0 * t.Sub(t.Truncate(period)).Seconds() / period.Seconds()
+	offset := t.Sub(t.Truncate(period)).Seconds() / period.Seconds()
 
-	for i := 0; i < 24; i++ {
-		c := colorful.Hcl(offset, 0.75, 0.25)
-		r, g, b := c.RGB255()
-		a.frame[i] = color.RGBA{r, g, b, 0}
-		offset += 360.0 / 24.0
+	for i := range a.frame {
+		pos := float64(i)/float64(len(a.frame)) + offset
+		// TODO: find a way to increase red/purple/blue and decrease green
+		c := color.YCbCr{
+			Y:  uint8(255 / 2),
+			Cb: uint8(255 * math.Sin(tau*pos)),
+			Cr: uint8(255 * math.Cos(tau*pos)),
+		}
+		r, g, b, _ := c.RGBA()
+		a.frame[i] = color.RGBA{
+			R: uint8(r >> (8 + 1)),
+			G: uint8(g >> (8 + 1)),
+			B: uint8(b >> (8 + 1)),
+		}
 	}
 }
 
