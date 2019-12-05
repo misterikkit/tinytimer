@@ -9,21 +9,6 @@
 
 <body>
     <h1>Tiny Timer!</h1>
-    <div>
-        <p>
-            <button id="boot">BOOT</button>
-            <button class="goEvent" id="timer_10m">10 minutes</button>
-            <button class="goEvent" id="timer_2m">2 minutes</button>
-            <button class="goEvent" id="cancel">Cancel</button>
-        </p>
-        <p>
-            <button id="timers">2&10</button>
-            <button id="all">all</button>
-        </p>
-    </div>
-    <h1>
-        <!--for spacing-->
-    </h1>
     <ol>
         <li class="led" id="led00"></li>
         <li class="led" id="led01"></li>
@@ -53,6 +38,22 @@
         <li class="led" id="led22"></li>
         <li class="led" id="led23"></li>
     </ol>
+    <h1>
+        <!--for spacing-->
+    </h1>
+    <div>
+        <p>
+            <button id="boot">BOOT</button>
+            <button class="goEvent" id="timer_10m">10 minutes</button>
+            <button class="goEvent" id="timer_2m">2 minutes</button>
+            <button class="goEvent" id="cancel">Cancel</button>
+        </p>
+        <p>
+            <button id="timers">2&10</button>
+            <button id="all">all</button>
+        </p>
+    </div>
+
     <script src="/js/jquery-3.4.1.js"></script>
     <script src="/js/wasm_exec.js"></script>
     <script src="/js/led.js"></script>
