@@ -21,8 +21,8 @@ const (
 const maxPoints = 5 // and then you win
 
 var (
-	purple = graphics.Scale(color.RGBA{183, 95, 179, 0}, 0.5)
-	green  = graphics.Scale(color.RGBA{105, 197, 91, 0}, 0.5)
+	purple = graphics.Scale(color.RGBA{183, 95, 179, 0}, graphics.MaxIntensity)
+	green  = graphics.Scale(color.RGBA{105, 197, 91, 0}, graphics.MaxIntensity)
 )
 
 type player struct {
@@ -86,7 +86,7 @@ func New(ui *input.Manager) *App {
 			},
 		},
 		scoreBG: graphics.Sprite{
-			Color:    graphics.Scale(graphics.White, 0.5),
+			Color:    graphics.Scale(graphics.White, graphics.MaxIntensity),
 			Position: 180,
 			Size:     10 * graphics.PixelWidth,
 		},
