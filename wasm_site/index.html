@@ -10,9 +10,12 @@
     <h1>Tiny Timer!</h1>
     <div>
         <button id="boot">BOOT</button>
-        <button class="goEvent" id="timer_2m">2 minutes</button>
         <button class="goEvent" id="timer_10m">10 seconds</button>
+        <button class="goEvent" id="timer_2m">2 minutes</button>
         <button class="goEvent" id="cancel">Cancel</button>
+        <br />
+        <button id="timers">2&10</button>
+        <button id="all">all</button>
     </div>
     <h1>
         <!--for spacing-->
@@ -58,8 +61,12 @@
         // Set up button handlers
         $(function () {
             $("#boot").click(function () { location.reload(); })
-            $(".goEvent").mousedown(function (e) { $(e.target).attr("state", true); })
-            $(".goEvent").mouseup(function (e) { $(e.target).attr("state", false); })
+            $(".goEvent").mousedown(function (e) { $(e.target).attr("state", true); });
+            $(".goEvent").mouseup(function (e) { $(e.target).attr("state", false); });
+            $("#timers").mousedown(function () { $("#timer_2m,#timer_10m").mousedown(); });
+            $("#timers").mouseup(function () { $("#timer_2m,#timer_10m").mouseup(); });
+            $("#all").mousedown(function () { $(".goEvent").mousedown(); });
+            $("#all").mouseup(function () { $(".goEvent").mouseup(); });
         });
 
         if ('instantiateStreaming' in WebAssembly) {
