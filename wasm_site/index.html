@@ -4,18 +4,22 @@
 <head>
     <link rel="stylesheet" href="/style.css" />
     <title>Tiny Timer!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=0.75, maximum-scale=1.0, user-scalable=no" />
 </head>
 
 <body>
     <h1>Tiny Timer!</h1>
     <div>
-        <button id="boot">BOOT</button>
-        <button class="goEvent" id="timer_10m">10 seconds</button>
-        <button class="goEvent" id="timer_2m">2 minutes</button>
-        <button class="goEvent" id="cancel">Cancel</button>
-        <br />
-        <button id="timers">2&10</button>
-        <button id="all">all</button>
+        <p>
+            <button id="boot">BOOT</button>
+            <button class="goEvent" id="timer_10m">10 minutes</button>
+            <button class="goEvent" id="timer_2m">2 minutes</button>
+            <button class="goEvent" id="cancel">Cancel</button>
+        </p>
+        <p>
+            <button id="timers">2&10</button>
+            <button id="all">all</button>
+        </p>
     </div>
     <h1>
         <!--for spacing-->
@@ -61,12 +65,12 @@
         // Set up button handlers
         $(function () {
             $("#boot").click(function () { location.reload(); })
-            $(".goEvent").mousedown(function (e) { $(e.target).attr("state", true); });
-            $(".goEvent").mouseup(function (e) { $(e.target).attr("state", false); });
-            $("#timers").mousedown(function () { $("#timer_2m,#timer_10m").mousedown(); });
-            $("#timers").mouseup(function () { $("#timer_2m,#timer_10m").mouseup(); });
-            $("#all").mousedown(function () { $(".goEvent").mousedown(); });
-            $("#all").mouseup(function () { $(".goEvent").mouseup(); });
+            $(".goEvent").on('mousedown touchstart', function (e) { $(e.target).attr("state", true); });
+            $(".goEvent").on('mouseup touchend', function (e) { $(e.target).attr("state", false); });
+            $("#timers").on('mousedown touchstart', function () { $("#timer_2m,#timer_10m").mousedown(); });
+            $("#timers").on('mouseup touchend', function () { $("#timer_2m,#timer_10m").mouseup(); });
+            $("#all").on('mousedown touchstart', function () { $(".goEvent").mousedown(); });
+            $("#all").on('mouseup touchend', function () { $(".goEvent").mouseup(); });
         });
 
         if ('instantiateStreaming' in WebAssembly) {
