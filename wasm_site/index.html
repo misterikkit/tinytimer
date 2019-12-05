@@ -49,18 +49,19 @@
     <script src="/js/jquery-3.4.1.js"></script>
     <script src="/js/wasm_exec.js"></script>
     <script src="/js/led.js"></script>
+    <script src="/js/button.js"></script>
     <script>
         const go = new Go(); // Defined in wasm_exec.js
         const WASM_URL = '/main.wasm';
 
         var wasm;
         // Set up button handlers
-        // $(function () {
-        //     $("#boot").click(function () { location.reload(); })
-        //     $(".goEvent").click(function (e) { wasm.exports.handleClick(e.target.id); })
-        // });
+        $(function () {
+            $("#boot").click(function () { location.reload(); })
+            $(".goEvent").mousedown(function (e) { $(e.target).attr("state", true); })
+            $(".goEvent").mouseup(function (e) { $(e.target).attr("state", false); })
+        });
 
-        // go.importObject.env['github.com/misterikkit/tinytimer.DisplayLEDs'] = DisplayLEDs;
         if ('instantiateStreaming' in WebAssembly) {
             WebAssembly.instantiateStreaming(fetch(WASM_URL), go.importObject).then(function (obj) {
                 wasm = obj.instance;
