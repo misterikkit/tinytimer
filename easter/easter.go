@@ -11,6 +11,7 @@ const (
 	Eggsit
 	Rainbow
 	Pong
+	Debug
 )
 
 type Egger struct {
@@ -51,6 +52,9 @@ func (e *Egger) handle(evt input.Event) {
 
 	case matchKonami(e.history):
 		e.current = Pong
+
+	case matchA10(e.history):
+		e.current = Debug
 	}
 }
 
@@ -137,4 +141,15 @@ func dumbMatch(d []input.Event) bool {
 		}
 	}
 	return b && c && bc
+}
+
+func matchA10(d []input.Event) bool {
+	if len(d) < 10 {
+		return false
+	}
+	d = d[len(d)-10:]
+	return match(d, []input.Event{
+		input.A_Fall, input.A_Fall, input.A_Fall, input.A_Fall, input.A_Fall,
+		input.A_Fall, input.A_Fall, input.A_Fall, input.A_Fall, input.A_Fall,
+	})
 }
