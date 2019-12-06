@@ -11,7 +11,7 @@ const (
 	Eggsit
 	Rainbow
 	Pong
-	Debug
+	ColorPicker
 )
 
 type Egger struct {
@@ -54,7 +54,7 @@ func (e *Egger) handle(evt input.Event) {
 		e.current = Pong
 
 	case matchA10(e.history):
-		e.current = Debug
+		e.current = ColorPicker
 	}
 }
 

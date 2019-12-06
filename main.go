@@ -4,7 +4,7 @@ import (
 	"image/color"
 	"time"
 
-	"github.com/misterikkit/tinytimer/apps/debug"
+	"github.com/misterikkit/tinytimer/apps/colorpicker"
 	"github.com/misterikkit/tinytimer/apps/pong"
 	"github.com/misterikkit/tinytimer/apps/rainbow"
 	"github.com/misterikkit/tinytimer/apps/timer"
@@ -29,7 +29,7 @@ func main() {
 		timer   = timer.New(mgr)
 		rainbow = rainbow.New()
 		pong    = pong.New(mgr)
-		debug   = debug.New(mgr)
+		picker  = colorpicker.New(mgr)
 	)
 	app := App(timer)
 	for {
@@ -50,9 +50,10 @@ func main() {
 				pong.Reset()
 				app = pong
 			}
-		case easter.Debug:
+		case easter.ColorPicker:
 			if isTimer(app) {
-				app = debug
+				picker.Reset()
+				app = picker
 			}
 		}
 
