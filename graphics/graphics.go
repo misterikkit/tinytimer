@@ -21,6 +21,8 @@ var (
 	Black = color.RGBA{}
 	White = Scale(color.RGBA{0xFF, 0xFF, 0xFF, 0}, MaxIntensity)
 	Red   = Scale(color.RGBA{0xFF, 0, 0, 0}, MaxIntensity)
+	Green = Scale(color.RGBA{0, 0xFF, 0, 0}, MaxIntensity)
+	Blue  = Scale(color.RGBA{0, 0, 0xFF, 0}, MaxIntensity)
 
 	// K8SBlue is used in the k8s logo
 	K8SBlue   = Scale(color.RGBA{0x32, 0x6C, 0xE5, 0}, MaxIntensity) // H=221deg S=78.2% V=89.8%
