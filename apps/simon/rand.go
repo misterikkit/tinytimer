@@ -11,7 +11,7 @@ func initRandom() {
 	sam.TRNG.CTRLA.SetBits(sam.TRNG_CTRLA_ENABLE)
 }
 
-func rand() uint32 {
+func randU32() uint32 {
 	// TODO: block until a new random is ready.
 	return sam.TRNG.DATA.Get()
 }
