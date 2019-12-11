@@ -7,6 +7,15 @@ button {
     font-size: 20pt;
 }
 
+.inCircle {
+    position: relative;
+    top: -360px;
+}
+
+.inCircle button {
+    width: 2em;
+}
+
 ol {
     display: inline-block;
     text-align: left;
