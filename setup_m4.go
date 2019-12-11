@@ -39,7 +39,9 @@ func (ui *userInterface) DisplayLEDs(c []color.RGBA) {
 			B: gamma8[c[i].B],
 		}
 	}
+	mask := arm.DisableInterrupts()
 	ui.neoPix.WriteColors(ui.gammaBuffer)
+	arm.EnableInterrupts(mask)
 }
 
 func setup() *userInterface {
