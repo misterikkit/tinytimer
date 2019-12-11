@@ -2,6 +2,7 @@ package simon
 
 import (
 	"image/color"
+	"math"
 	"time"
 
 	"github.com/misterikkit/tinytimer/graphics"
@@ -97,18 +98,7 @@ func (s *App) Frame() []color.RGBA { return s.frame }
 
 func (s *App) Update(now time.Time) {
 	graphics.Fill(s.frame, graphics.Black)
-	var bg []graphics.Sprite
-	switch s.state {
-	case correct:
-		bg = bgGreen
-	case incorrect:
-		bg = bgRed
-	default:
-		bg = bgWhite
-	}
-	for i := range bg {
-		bg[i].Render(s.frame)
-	}
+	s.doBG(now)
 
 	switch s.state {
 	case intro:
@@ -138,6 +128,27 @@ func (s *App) Update(now time.Time) {
 			s.state = intro
 			s.lastStateChange = now
 		}
+	}
+}
+
+func (s *App) doBG(now time.Time) {
+	var bg []graphics.Sprite
+	switch s.state {
+	case correct:
+		bg = bgGreen
+	case incorrect:
+		bg = bgRed
+	default:
+		bg = bgWhite
+	}
+
+	const period = 7 * time.Second
+	progress := now.Sub(now.Truncate(period)).Seconds() / period.Seconds()
+	size := float32(math.Sin(progress * math.Pi)) // use pi instead of 2*pi because we will square the result, halving the period
+	size = graphics.PixelWidth * (size*size + 1.0)
+	for i := range bg {
+		bg[i].Size = size
+		bg[i].Render(s.frame)
 	}
 }
 
