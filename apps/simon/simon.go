@@ -146,7 +146,7 @@ func (s *App) doDisplay(now time.Time) {
 	const idle = 100 * time.Millisecond
 	tokenDuration := dwell + idle
 	progress := now.Sub(s.lastStateChange) // negative value should be impossible
-	offset := int(progress) / int(tokenDuration)
+	offset := int(progress.Seconds() / tokenDuration.Seconds())
 
 	if offset >= len(s.sequence) {
 		s.state = userInput
