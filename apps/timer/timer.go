@@ -39,7 +39,7 @@ type App struct {
 func New(ui *input.Manager) *App {
 	t := &App{
 		state:     boot,
-		Animation: animation.NewLoader(graphics.White, graphics.Black, time.Now(), time.Now().Add(time.Second/2)),
+		Animation: animation.NewLoader(graphics.White, graphics.Black, graphics.Black, time.Now(), time.Now().Add(time.Second/2)),
 	}
 	ui.AddHandler(input.A_Fall, t.handleInput)
 	ui.AddHandler(input.B_Fall, t.handleInput)
@@ -111,7 +111,7 @@ func (t *App) startTimer(d time.Duration) {
 		fallthrough
 	case idle:
 		t.state = countdown
-		t.Animation = animation.NewLoader(graphics.Black, graphics.CSIOrange, time.Now(), time.Now().Add(d))
+		t.Animation = animation.NewLoader(graphics.Black, graphics.Green, graphics.Red, time.Now(), time.Now().Add(d))
 	}
 }
 

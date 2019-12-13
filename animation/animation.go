@@ -60,19 +60,22 @@ func (s *spinner) Update(now time.Time) bool {
 }
 
 type loader struct {
-	frame      []color.RGBA
-	bar, dot   graphics.Sprite
-	bg         color.RGBA
+	frame        []color.RGBA
+	bar, dot     graphics.Sprite
+	bgFrom, bgTo color.RGBA
+	// bg           color.RGBA
 	start, end time.Time
 	done       bool
 }
 
 // NewLoader initializes a loader animation.
-func NewLoader(fg, bg color.RGBA, start, end time.Time) Interface {
+func NewLoader(fg, bgFrom, bgTo color.RGBA, start, end time.Time) Interface {
 	return &loader{
-		frame: make([]color.RGBA, graphics.FrameSize),
-		bar:   graphics.Sprite{Color: fg},
-		bg:    bg,
+		frame:  make([]color.RGBA, graphics.FrameSize),
+		bar:    graphics.Sprite{Color: fg},
+		bgFrom: bgFrom,
+		bgTo:   bgTo,
+		// bg:     bg,
 		dot:   graphics.Sprite{Color: graphics.White, Size: graphics.PixelWidth},
 		start: start,
 		end:   end,
@@ -85,13 +88,18 @@ func (l *loader) Update(now time.Time) bool {
 	if l.done {
 		return true
 	}
-	graphics.Fill(l.frame, l.bg)
+
 	progress := float32(1.0)
 	if now.Before(l.end) {
 		progress = float32(now.Sub(l.start)) / float32(l.end.Sub(l.start))
 	} else {
 		l.done = true
 	}
+	graphics.Fill(l.frame, graphics.Add(
+		graphics.Scale(l.bgFrom, 1.0-progress),
+		graphics.Scale(l.bgTo, progress),
+	))
+
 	l.bar.Size = graphics.Circ * progress
 	l.bar.Position = l.bar.Size / 2.0
 
