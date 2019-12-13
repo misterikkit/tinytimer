@@ -125,6 +125,6 @@ func (t *App) cancelTimer() {
 // toIdle fades from current animation to idle animation
 func (t *App) toIdle(d time.Duration) {
 	t.state = idle
-	spin := animation.NewSpinner(graphics.Blue)
+	spin := animation.NewSpinner(color.RGBA{0, 0x7F, 0xFF, 0})
 	t.Animation = animation.NewFader(t.Animation, spin, time.Now(), time.Now().Add(d))
 }

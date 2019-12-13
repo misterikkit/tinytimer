@@ -24,7 +24,7 @@ const coolDown = 200 * time.Millisecond
 const maxPoints = 5 // and then you win
 
 var (
-	purple = graphics.Scale(color.RGBA{183, 95, 179, 0}, graphics.MaxIntensity)
+	purple = graphics.Scale(color.RGBA{163, 95, 229, 0}, graphics.MaxIntensity)
 	green  = graphics.Scale(color.RGBA{105, 197, 91, 0}, graphics.MaxIntensity)
 )
 
