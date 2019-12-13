@@ -153,7 +153,13 @@ func (s *App) doBG(now time.Time) {
 }
 
 func (s *App) doDisplay(now time.Time) {
-	dwell := 750 * time.Millisecond // TODO: speed up as sequence gets longer
+	// Speed up every 5 tokens
+	const minDwell = 100 * time.Millisecond
+	speedup := len(s.sequence) / 5
+	dwell := time.Duration(750-100*speedup) * time.Millisecond
+	if dwell < minDwell {
+		dwell = minDwell
+	}
 	const idle = 100 * time.Millisecond
 	tokenDuration := dwell + idle
 	progress := now.Sub(s.lastStateChange) // negative value should be impossible
