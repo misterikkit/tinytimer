@@ -34,7 +34,7 @@ func (ui *userInterface) Sleepish() { hibernate(ui) }
 func (ui *userInterface) DisplayLEDs(c []color.RGBA) {
 	for i := range ui.gammaBuffer {
 		ui.gammaBuffer[i] = color.RGBA{
-			R: gamma8[c[i].R],
+			R: gamma8[c[i].R/2], // extra red correction for maple
 			G: gamma8[c[i].G],
 			B: gamma8[c[i].B],
 		}
