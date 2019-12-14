@@ -53,8 +53,8 @@ func setup() *userInterface {
 	ui := userInterface{
 		neoPix:      ws2812.New(neoPin),
 		btnCancel:   machine.D2,
-		btn2Min:     machine.D11,
-		btn10Min:    machine.D12,
+		btn2Min:     machine.D12,
+		btn10Min:    machine.D11,
 		gammaBuffer: make([]color.RGBA, frameSize),
 	}
 	configureInput(ui.btnCancel)
