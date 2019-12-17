@@ -29,7 +29,7 @@ const (
 )
 
 // sequence length needed to win
-const finalScore = 5
+const finalScore = 25
 
 var (
 	bgWhite = []graphics.Sprite{
@@ -124,17 +124,26 @@ func (s *App) Update(now time.Time) {
 			if len(s.sequence) == finalScore {
 				s.state = victory
 			} else {
-				s.sequence = append(s.sequence, token(randU32()%3))
 				s.state = displaying
+				s.sequence = append(s.sequence, token(randU32()%3))
 			}
 		}
 
 	case incorrect:
+		// TODO: show final score
 		if now.Sub(s.lastStateChange) > time.Second {
 			s.collectedInput = nil
 			s.sequence = nil
 			s.state = intro
 			s.lastStateChange = now
+		}
+
+	case victory:
+		const speed = graphics.Circ / 5
+		dist := float32(now.Sub(s.lastStateChange).Seconds()) * speed
+		for i := range s.sprites {
+			s.sprites[i].Position = graphics.Circ*float32(i)/3 + dist
+			s.sprites[i].Render(s.frame)
 		}
 	}
 }
