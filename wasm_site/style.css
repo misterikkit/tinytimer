@@ -9,11 +9,18 @@ button {
 
 .inCircle {
     position: relative;
-    top: -360px;
+    top: -400px;
 }
 
 .inCircle button {
-    width: 2em;
+    width: 3em;
+    height: 3em;
+    border-radius: 1.5em;
+}
+
+.multiButtons {
+    position: relative;
+    top: -200px;
 }
 
 ol {
