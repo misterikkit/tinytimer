@@ -25,7 +25,11 @@ const (
 	userInput
 	correct
 	incorrect
+	victory
 )
+
+// sequence length needed to win
+const finalScore = 5
 
 var (
 	bgWhite = []graphics.Sprite{
@@ -66,9 +70,9 @@ func New(ui *input.Manager) *App {
 	s := &App{
 		frame: make([]color.RGBA, 24),
 		sprites: []graphics.Sprite{
-			{Size: 3 * graphics.PixelWidth, Position: graphics.Circ * 0 / 3, Color: graphics.Red},
-			{Size: 3 * graphics.PixelWidth, Position: graphics.Circ * 2 / 3, Color: graphics.Green},
-			{Size: 3 * graphics.PixelWidth, Position: graphics.Circ * 1 / 3, Color: graphics.Blue},
+			{Size: 4 * graphics.PixelWidth, Position: graphics.Circ * 0 / 3, Color: graphics.Red},
+			{Size: 4 * graphics.PixelWidth, Position: graphics.Circ * 2 / 3, Color: graphics.Green},
+			{Size: 4 * graphics.PixelWidth, Position: graphics.Circ * 1 / 3, Color: graphics.Blue},
 		},
 		echo: make([]bool, 3),
 
@@ -116,9 +120,13 @@ func (s *App) Update(now time.Time) {
 	case correct:
 		if now.Sub(s.lastStateChange) > time.Second {
 			s.collectedInput = nil
-			s.sequence = append(s.sequence, token(randU32()%3))
-			s.state = displaying
 			s.lastStateChange = now
+			if len(s.sequence) == finalScore {
+				s.state = victory
+			} else {
+				s.sequence = append(s.sequence, token(randU32()%3))
+				s.state = displaying
+			}
 		}
 
 	case incorrect:
