@@ -97,8 +97,6 @@ func (t *App) animationDone() {
 	case countdown:
 		t.state = timerPop
 		t.Animation = animation.NewFlasher(graphics.Red, time.Now().Add(2*time.Second))
-	case timerPop:
-		t.toIdle(1 * time.Second)
 	}
 }
 
@@ -117,6 +115,8 @@ func (t *App) startTimer(d time.Duration) {
 
 func (t *App) cancelTimer() {
 	switch t.state {
+	case timerPop:
+		fallthrough
 	case countdown:
 		t.toIdle(1 * time.Second)
 	}
