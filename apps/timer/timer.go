@@ -68,9 +68,9 @@ func (t *App) handleInput(e input.Event) {
 	case input.A_Fall:
 		t.handleEvent(cancel)
 	case input.B_Fall:
-		t.handleEvent(timer10M)
-	case input.C_Fall:
 		t.handleEvent(timer2M)
+	case input.C_Fall:
+		t.handleEvent(timer10M)
 	}
 }
 
