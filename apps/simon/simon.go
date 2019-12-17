@@ -130,12 +130,9 @@ func (s *App) Update(now time.Time) {
 		}
 
 	case incorrect:
-		// TODO: show final score
+		// TODO: show final score before resetting
 		if now.Sub(s.lastStateChange) > time.Second {
-			s.collectedInput = nil
-			s.sequence = nil
-			s.state = intro
-			s.lastStateChange = now
+			s.Reset()
 		}
 
 	case victory:
@@ -205,6 +202,9 @@ func (s *App) doEcho() {
 
 // handleInput appends a user input to the collected input.
 func (s *App) handleInput(e input.Event) {
+	if s.state == victory {
+		s.Reset()
+	}
 	if s.state != userInput {
 		return
 	}
