@@ -1,6 +1,7 @@
 package easter
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/misterikkit/tinytimer/input"
@@ -13,6 +14,7 @@ const (
 	Pong
 	ColorPicker
 	Simon
+	Arcade
 )
 
 type Egger struct {
@@ -24,6 +26,7 @@ type Egger struct {
 func New(ui *input.Manager) *Egger {
 	e := new(Egger)
 	e.current = None
+	ui.AddHandler(input.A_Rise, e.handle)
 	ui.AddHandler(input.A_Fall, e.handle)
 	ui.AddHandler(input.B_Fall, e.handle)
 	ui.AddHandler(input.C_Fall, e.handle)
@@ -44,6 +47,7 @@ func (e *Egger) handle(evt input.Event) {
 	}
 	e.history = append(e.history, evt)
 	e.last = time.Now()
+	println(fmt.Sprintf("%v", e.history))
 	switch {
 	case evt == input.ABC_Fall:
 		e.current = Eggsit
@@ -56,7 +60,10 @@ func (e *Egger) handle(evt input.Event) {
 
 	case matchA10(e.history):
 		e.current = ColorPicker
+	case matchBounce(e.history):
+		e.current = Arcade
 	}
+
 }
 
 // The sequence is (B, C) * 5, ignoring any accidental BC events.
@@ -139,23 +146,23 @@ func match(a, b []input.Event) bool {
 // The sequence is A, A, BC, BC, B, C, B, C.
 // But we have to ignore the extra B and C that come with each BC.
 func matchKonami(h []input.Event) bool {
-	if len(h) < 12 {
+	if len(h) < 14 {
 		return false
 	}
-	h = h[len(h)-12:]
-	upup := h[:2]
-	if !match(upup, []input.Event{input.A_Fall, input.A_Fall}) {
+	h = h[len(h)-14:]
+	upup := h[:4]
+	if !match(upup, []input.Event{input.A_Rise, input.A_Fall, input.A_Rise, input.A_Fall}) {
 		return false
 	}
-	lrlr := h[8:]
+	lrlr := h[10:]
 	if !match(lrlr, []input.Event{input.B_Fall, input.C_Fall, input.B_Fall, input.C_Fall}) {
 		return false
 	}
-	d1 := h[2:5]
+	d1 := h[4:7]
 	if !dumbMatch(d1) {
 		return false
 	}
-	d2 := h[5:8]
+	d2 := h[7:10]
 	if !dumbMatch(d2) {
 		return false
 	}
@@ -179,12 +186,25 @@ func dumbMatch(d []input.Event) bool {
 }
 
 func matchA10(d []input.Event) bool {
-	if len(d) < 10 {
+	if len(d) < 20 {
 		return false
 	}
-	d = d[len(d)-10:]
+	d = d[len(d)-20:]
 	return match(d, []input.Event{
-		input.A_Fall, input.A_Fall, input.A_Fall, input.A_Fall, input.A_Fall,
-		input.A_Fall, input.A_Fall, input.A_Fall, input.A_Fall, input.A_Fall,
+		input.A_Rise, input.A_Fall, input.A_Rise, input.A_Fall,
+		input.A_Rise, input.A_Fall, input.A_Rise, input.A_Fall,
+		input.A_Rise, input.A_Fall, input.A_Rise, input.A_Fall,
+		input.A_Rise, input.A_Fall, input.A_Rise, input.A_Fall,
+		input.A_Rise, input.A_Fall, input.A_Rise, input.A_Fall,
+	})
+}
+
+func matchBounce(d []input.Event) bool {
+	if len(d) < 6 {
+		return false
+	}
+	return match(d[len(d)-6:], []input.Event{
+		input.A_Rise, input.B_Fall, input.C_Fall,
+		input.B_Fall, input.C_Fall, input.A_Fall,
 	})
 }

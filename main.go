@@ -4,6 +4,7 @@ import (
 	"image/color"
 	"time"
 
+	"github.com/misterikkit/tinytimer/apps/arcade"
 	"github.com/misterikkit/tinytimer/apps/colorpicker"
 	"github.com/misterikkit/tinytimer/apps/pong"
 	"github.com/misterikkit/tinytimer/apps/rainbow"
@@ -32,6 +33,7 @@ func main() {
 		pong    = pong.New(mgr)
 		picker  = colorpicker.New(mgr)
 		simon   = simon.New(mgr)
+		arcade  = arcade.New()
 	)
 	app := App(timer)
 	for {
@@ -61,6 +63,11 @@ func main() {
 			if isTimer(app) {
 				simon.Reset()
 				app = simon
+			}
+		case easter.Arcade:
+			if isTimer(app) {
+				arcade.Reset()
+				app = arcade
 			}
 		}
 
