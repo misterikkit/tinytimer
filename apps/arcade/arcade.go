@@ -63,13 +63,26 @@ func (a *App) Frame() []color.RGBA { return a.frame }
 
 func (a *App) Reset(now time.Time) {
 	a.paddle.Size = 2 * zoneSize
+	a.fail(now)
+	if a.speed < 0 {
+		a.ball.Position = graphics.Circ
+	} else {
+		a.ball.Position = 0
+	}
+}
+
+func (a *App) fail(now time.Time) {
 	a.bounces = 0
 	if a.speed < 0 {
 		a.speed = -minSpeed
-		a.ball.Position = graphics.Circ
 	} else {
 		a.speed = minSpeed
-		a.ball.Position = 0
+	}
+	if a.ball.Position > graphics.Circ {
+		a.ball.Position -= graphics.Circ
+	}
+	if a.ball.Position < 0 {
+		a.ball.Position += graphics.Circ
 	}
 	a.state = game
 	a.lastUpdate = now
@@ -83,7 +96,7 @@ func (a *App) Update(now time.Time) {
 	case game:
 		if a.ball.Position < leftBound || a.ball.Position > rightBound {
 			// LOSE!
-			a.Reset(now)
+			a.fail(now)
 		}
 	case victory:
 		if a.ball.Position > graphics.Circ {
