@@ -1,7 +1,6 @@
 package easter
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/misterikkit/tinytimer/input"
@@ -47,7 +46,6 @@ func (e *Egger) handle(evt input.Event) {
 	}
 	e.history = append(e.history, evt)
 	e.last = time.Now()
-	println(fmt.Sprintf("%v", e.history))
 	switch {
 	case evt == input.ABC_Fall:
 		e.current = Eggsit

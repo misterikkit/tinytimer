@@ -33,7 +33,7 @@ func main() {
 		pong    = pong.New(mgr)
 		picker  = colorpicker.New(mgr)
 		simon   = simon.New(mgr)
-		arcade  = arcade.New()
+		arcade  = arcade.New(mgr)
 	)
 	app := App(timer)
 	for {
@@ -66,7 +66,7 @@ func main() {
 			}
 		case easter.Arcade:
 			if isTimer(app) {
-				arcade.Reset()
+				arcade.Reset(time.Now())
 				app = arcade
 			}
 		}
