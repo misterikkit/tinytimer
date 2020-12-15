@@ -1,9 +1,18 @@
-flash:
+build: _out/flash.uf2
+
+_out/flash.uf2: _out $(shell find -name '*.go')
+	tinygo build -o _out/flash.uf2 -target=itsybitsy-m4
+
+_out:
+	mkdir _out
+
+flash: build
 	sudo mount -t drvfs e: /mnt/e
-	tinygo build -o /mnt/e/flash.uf2 -target=itsybitsy-m4
+	cp _out/flash.uf2 -target=itsybitsy-m4
 
 wasm: wasm_site/main.wasm
 	date > wasm_site/built_at.txt
+	tinygo version >> wasm_site/built_at.txt
 
 wasm_site/main.wasm: $(shell find -name '*.go')
 	tinygo build -o wasm_site/main.wasm -target=wasm
