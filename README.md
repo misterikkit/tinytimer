@@ -2,6 +2,8 @@
 
 A small timer for use in meetings. Web version is available at https://tiny-timer.netlify.com
 
+User guide is at http://go.basseri.com/tiny-timer-guide
+
 Required versions: tinygo 0.16, go1.15
 
 Build
