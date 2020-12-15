@@ -9,8 +9,8 @@ import (
 	"machine"
 	"time"
 
-	"github.com/misterikkit/tinygo-drivers/ws2812" // TODO: fix upstream
 	"tinygo.org/x/drivers/apa102"
+	"tinygo.org/x/drivers/ws2812"
 )
 
 const frameSize = 24
