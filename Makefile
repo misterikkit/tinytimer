@@ -25,3 +25,4 @@ serve: wasm
 
 clean:
 	rm -f wasm_site/main.wasm
+	rm -f _out/flash.uf2
